@@ -1,0 +1,76 @@
+﻿<Window x:Class="HrtzSysInfo.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:properties="clr-namespace:HrtzSysInfo.Properties"
+        mc:Ignorable="d"
+        Title="Settings" Height="385" Width="366"
+        ResizeMode="NoResize">
+    <Grid>
+        <ScrollViewer>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Margin="15">
+
+                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Date and Time" />
+                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=PollingRate_DateTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Date format" />
+                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=Formatting_Date, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Time format" />
+                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=Formatting_Time, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Week" />
+                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=PollingRate_Week, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Network" />
+                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=PollingRate_Network, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="External IP Address" />
+                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=PollingRate_ExternalIp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Internal IP Address" />
+                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=PollingRate_InternalIp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Upload max value" />
+                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=NetworkUpMaxValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Download max value" />
+                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=NetworkDownMaxValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="CPU" />
+                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=PollingRate_Cpu, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="RAM" />
+                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=PollingRate_Ram, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Temperatures" />
+                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=PollingRate_Temp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="CPU max temperature" />
+                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=CpuTempMaxValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="GPU max temperature" />
+                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=GpuTempMaxValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Drives" />
+                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=PollingRate_Drives, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Margin="15">
+                    <CheckBox Content="Show Date and Time" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=SectionVisibility_DateTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,3,0,5" />
+                    <CheckBox Content="Show Network" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=SectionVisibility_Network, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,3,0,5" />
+                    <CheckBox Content="Show System" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=SectionVisibility_System, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,3,0,5" />
+                    <CheckBox Content="Show Drives" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=SectionVisibility_Drives, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,3,0,5" />
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</Window>

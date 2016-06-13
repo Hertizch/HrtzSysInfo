@@ -1,0 +1,18 @@
+﻿<Application x:Class="HrtzSysInfo.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:viewModels="clr-namespace:HrtzSysInfo.ViewModels"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/Window.xaml" />
+                <ResourceDictionary Source="Styles/TextContainer.xaml" />
+                <ResourceDictionary Source="Styles/ProgressBar.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <viewModels:ShellVm x:Key="ShellVm" />
+            <viewModels:GlobalSettingsVm x:Key="GlobalSettingsVm" />
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
