@@ -41,7 +41,7 @@
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="OpenHardwareMonitorLib">
-      <HintPath>D:\Google Drive\HRTZ\.NET Libraries\OpenHardwareMonitorLib.dll</HintPath>
+      <HintPath>..\..\..\..\Desktop\OpenHardwareMonitorLib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

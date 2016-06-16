@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Timers;
 using HrtzSysInfo.Extensions;
 using HrtzSysInfo.Properties;
@@ -44,7 +45,7 @@ namespace HrtzSysInfo.Utilities
         {
             try
             {
-                DriveInfos = DriveInfo.GetDrives();
+                DriveInfos = DriveInfo.GetDrives().Where(x => x.IsReady);
             }
             catch (Exception ex)
             {

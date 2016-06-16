@@ -12,6 +12,7 @@ namespace HrtzSysInfo.ViewModels
         {
             Debug.WriteLine("Created ViewModel: GlobalSettingsVm");
 
+            // Init default values
             GlobalSettings = new GlobalSettings
             {
                 PollingRateDateTime = 1000,
@@ -39,6 +40,11 @@ namespace HrtzSysInfo.ViewModels
                 SystemTempCpuMaxValue = 90,
                 SystemTempGpuMaxValue = 80
             };
+
+            // Create global settings file if not exist
+            if (!File.Exists(SettingsFilename))
+                if (CmdSaveSettings.CanExecute(null))
+                    CmdSaveSettings.Execute(null);
 
             // Load global settings
             if (CmdLoadSettings.CanExecute(null))
@@ -92,10 +98,6 @@ namespace HrtzSysInfo.ViewModels
         {
             GlobalSettings = XmlExtensions.DeserializeFromXml<GlobalSettings>(SettingsFilename);
             Debug.WriteLine("Loaded settings from file: " + SettingsFilename);
-
-            Debug.WriteLine("LEft: " + GlobalSettings.UiLeft);
-
-            Debug.WriteLine("CPU: " + GlobalSettings.PollingRateCpu);
         }
     }
 }

@@ -20,6 +20,8 @@ namespace HrtzSysInfo
         public MainWindow()
         {
             InitializeComponent();
+
+            //NetworkExtensions.CalculateMaxTranserSpeed();
         }
 
         // this is the offset of the mouse cursor from the top left corner of the window

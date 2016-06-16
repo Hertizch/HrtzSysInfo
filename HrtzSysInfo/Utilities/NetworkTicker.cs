@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Timers;
 using HrtzSysInfo.Extensions;
 using HrtzSysInfo.Properties;
@@ -22,17 +23,28 @@ namespace HrtzSysInfo.Utilities
 
         private void Initialize()
         {
-            var pcc = new PerformanceCounterCategory("Network Interface");
-            var instanceNames = pcc.GetInstanceNames();
+            //var pcc = new PerformanceCounterCategory("Network Interface");
+            //var instanceNames = pcc.GetInstanceNames();
 
             /*string instance = null;
             foreach (var instanceName in instanceNames.Where(instanceName => instanceName.Contains("Intel")))
                 instance = instanceName;*/
 
-            Debug.WriteLine(instanceNames[0]);
+            var deviceName = string.Empty;
 
-            _pcSent = new PerformanceCounter("Network Interface", "Bytes Sent/sec", instanceNames[0]);
-            _pcRecieved = new PerformanceCounter("Network Interface", "Bytes Received/sec", instanceNames[0]);
+            foreach (var ni in NetworkInterface.GetAllNetworkInterfaces().Where(x => x.OperationalStatus.Equals(OperationalStatus.Up)).Where(x => x.NetworkInterfaceType.Equals(NetworkInterfaceType.Wireless80211) || x.NetworkInterfaceType.Equals(NetworkInterfaceType.Ethernet)))
+                deviceName = ni.Description;
+
+            if (string.IsNullOrEmpty(deviceName))
+            {
+                Debug.WriteLine("No network adaper match criteria.");
+                return;
+            }
+
+            Debug.WriteLine(deviceName);
+
+            _pcSent = new PerformanceCounter("Network Interface", "Bytes Sent/sec", deviceName);
+            _pcRecieved = new PerformanceCounter("Network Interface", "Bytes Received/sec", deviceName);
 
             // Traffic timer
             var timerTraffic = new Timer { Interval = GlobalSettingsVm.Instance.GlobalSettings.PollingRateNetwork };
