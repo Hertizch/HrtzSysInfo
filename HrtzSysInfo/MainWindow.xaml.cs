@@ -1,8 +1,14 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Reflection;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
+using HrtzSysInfo.Extensions;
 using HrtzSysInfo.Properties;
+using HrtzSysInfo.ViewModels;
 
 namespace HrtzSysInfo
 {
@@ -61,7 +67,18 @@ namespace HrtzSysInfo
 
         private void MainWindow_OnClosing(object sender, CancelEventArgs e)
         {
-            Settings.Default.Save();
+            // Set registry value
+            RegistryExtensions.RegisterInStartup("HrtzSysInfo", Settings.Default.Ui_ExecuteAtStartup);
+
+            // Save global settings
+            if (GlobalSettingsVm.Instance.CmdSaveSettings.CanExecute(null))
+                GlobalSettingsVm.Instance.CmdSaveSettings.Execute(null);
+        }
+
+        private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
+        {
+           /* var bindingExpression = ((Window)sender).GetBindingExpression(LeftProperty);
+            bindingExpression?.UpdateTarget();*/
         }
     }
 }

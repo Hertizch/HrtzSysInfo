@@ -286,5 +286,29 @@ namespace HrtzSysInfo.Properties {
                 this["PollingRate_ExternalIp"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Ui_ShowInTaskbar {
+            get {
+                return ((bool)(this["Ui_ShowInTaskbar"]));
+            }
+            set {
+                this["Ui_ShowInTaskbar"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Ui_ExecuteAtStartup {
+            get {
+                return ((bool)(this["Ui_ExecuteAtStartup"]));
+            }
+            set {
+                this["Ui_ExecuteAtStartup"] = value;
+            }
+        }
     }
 }

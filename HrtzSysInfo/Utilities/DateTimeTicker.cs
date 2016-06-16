@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Timers;
 using HrtzSysInfo.Extensions;
 using HrtzSysInfo.Properties;
+using HrtzSysInfo.ViewModels;
 
 namespace HrtzSysInfo.Utilities
 {
@@ -12,17 +13,17 @@ namespace HrtzSysInfo.Utilities
         {
             Debug.WriteLine("Created Utility Class: DateTimeTicker");
 
-            if (Settings.Default.SectionVisibility_DateTime)
+            if (GlobalSettingsVm.Instance.GlobalSettings.VisibilityDateTime)
                 Initialize();
         }
 
         private void Initialize()
         {
-            var timerNow = new Timer { Interval = Settings.Default.PollingRate_DateTime };
+            var timerNow = new Timer { Interval = GlobalSettingsVm.Instance.GlobalSettings.PollingRateDateTime };
             timerNow.Elapsed += timerNow_Elapsed;
             timerNow.Start();
 
-            var timerWeek = new Timer { Interval = Settings.Default.PollingRate_Week };
+            var timerWeek = new Timer { Interval = GlobalSettingsVm.Instance.GlobalSettings.PollingRateWeek };
             timerWeek.Elapsed += timerWeek_Elapsed;
             timerWeek.Start();
 

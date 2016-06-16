@@ -6,6 +6,7 @@ using System.Net;
 using System.Timers;
 using HrtzSysInfo.Extensions;
 using HrtzSysInfo.Properties;
+using HrtzSysInfo.ViewModels;
 
 namespace HrtzSysInfo.Utilities
 {
@@ -15,7 +16,7 @@ namespace HrtzSysInfo.Utilities
         {
             Debug.WriteLine("Created Utility Class: NetworkTicker");
 
-            if (Settings.Default.SectionVisibility_Network)
+            if (GlobalSettingsVm.Instance.GlobalSettings.VisibilityNetwork)
                 Initialize();
         }
 
@@ -34,17 +35,17 @@ namespace HrtzSysInfo.Utilities
             _pcRecieved = new PerformanceCounter("Network Interface", "Bytes Received/sec", instanceNames[0]);
 
             // Traffic timer
-            var timerTraffic = new Timer { Interval = Settings.Default.PollingRate_Network };
+            var timerTraffic = new Timer { Interval = GlobalSettingsVm.Instance.GlobalSettings.PollingRateNetwork };
             timerTraffic.Elapsed += timerTraffic_Elapsed;
             timerTraffic.Start();
 
             // External IP timer
-            var timerExternalIp = new Timer { Interval = Settings.Default.PollingRate_ExternalIp };
+            var timerExternalIp = new Timer { Interval = GlobalSettingsVm.Instance.GlobalSettings.PollingRateIpExternal };
             timerExternalIp.Elapsed += timerExternalIp_Elapsed;
             timerExternalIp.Start();
 
             // Internal IP timer
-            var timerInternalIp = new Timer { Interval = Settings.Default.PollingRate_InternalIp };
+            var timerInternalIp = new Timer { Interval = GlobalSettingsVm.Instance.GlobalSettings.PollingRateIpInternal };
             timerInternalIp.Elapsed += timerInternalIp_Elapsed;
             timerInternalIp.Start();
 

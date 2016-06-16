@@ -1,4 +1,7 @@
-﻿using System.Windows;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
+using System.Windows;
 using HrtzSysInfo.Extensions;
 
 namespace HrtzSysInfo.ViewModels
@@ -33,8 +36,18 @@ namespace HrtzSysInfo.ViewModels
 
         private static void ExecuteCmd_OpenSettings(object obj)
         {
-            var settingsWindow = new SettingsWindow();
-            settingsWindow.ShowDialog();
+            if (File.Exists(GlobalSettingsVm.Instance.SettingsFilename))
+                try
+                {
+                    Process.Start(GlobalSettingsVm.Instance.SettingsFilename);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+
+            /*var settingsWindow = new SettingsWindow();
+            settingsWindow.ShowDialog();*/
         }
     }
 }

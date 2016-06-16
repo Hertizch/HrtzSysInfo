@@ -5,32 +5,42 @@ namespace HrtzSysInfo.Models
     public class GlobalSettings : ObservableObject
     {
         // Private fields
-        private int _pollingRateDateTime = 1000;
-        private int _pollingRateCpu = 1000;
-        private int _pollingRateRam = 1000;
-        private int _pollingRateDrives = 30000;
-        private int _pollingRateTemps = 1000;
-        private int _pollingRateNetwork = 1000;
-        private string _formattingDate = "dddd dd.MM.yyyy";
-        private string _formattingTime = "HH:mm";
+        private int _pollingRateDateTime;
+        private int _pollingRateWeek;
+        private int _pollingRateCpu;
+        private int _pollingRateRam;
+        private int _pollingRateDrives;
+        private int _pollingRateTemps;
+        private int _pollingRateNetwork;
+        private int _pollingRateIpInternal;
+        private int _pollingRateIpExternal;
+        private string _formattingDate;
+        private string _formattingTime;
         private double _uiTop;
         private double _uiLeft;
-        private double _uiWidth = 200;
-        private double _uiHeight = 360;
-        private bool _visibilityNetwork = true;
-        private bool _visibilitySystem = true;
-        private bool _visibilityDrives = true;
-        private bool _visibilityDateTime = true;
-        private long _networkSentMaxValue = 4089446;
-        private long _networkRecieveMaxValue = 13631488;
-        private int _systemTempCpuMaxValue = 90;
-        private int _systemTempGpuMaxValue = 80;
+        private double _uiWidth;
+        private bool _uiShowInTaskbar;
+        private bool _uiRunAtStartup;
+        private bool _visibilityNetwork;
+        private bool _visibilitySystem;
+        private bool _visibilityDrives;
+        private bool _visibilityDateTime;
+        private long _networkSentMaxValue;
+        private long _networkRecieveMaxValue;
+        private int _systemTempCpuMaxValue;
+        private int _systemTempGpuMaxValue;
 
         // Public properties
         public int PollingRateDateTime
         {
             get { return _pollingRateDateTime; }
             set { SetField(ref _pollingRateDateTime, value); }
+        }
+
+        public int PollingRateWeek
+        {
+            get { return _pollingRateWeek; }
+            set { SetField(ref _pollingRateWeek, value); }
         }
 
         public int PollingRateCpu
@@ -63,6 +73,18 @@ namespace HrtzSysInfo.Models
             set { SetField(ref _pollingRateNetwork, value); }
         }
 
+        public int PollingRateIpInternal
+        {
+            get { return _pollingRateIpInternal; }
+            set { SetField(ref _pollingRateIpInternal, value); }
+        }
+
+        public int PollingRateIpExternal
+        {
+            get { return _pollingRateIpExternal; }
+            set { SetField(ref _pollingRateIpExternal, value); }
+        }
+
         public string FormattingDate
         {
             get { return _formattingDate; }
@@ -93,10 +115,16 @@ namespace HrtzSysInfo.Models
             set { SetField(ref _uiWidth, value); }
         }
 
-        public double UiHeight
+        public bool UiShowInTaskbar
         {
-            get { return _uiHeight; }
-            set { SetField(ref _uiHeight, value); }
+            get { return _uiShowInTaskbar; }
+            set { SetField(ref _uiShowInTaskbar, value); }
+        }
+
+        public bool UiRunAtStartup
+        {
+            get { return _uiRunAtStartup; }
+            set { SetField(ref _uiRunAtStartup, value); }
         }
 
         public bool VisibilityNetwork

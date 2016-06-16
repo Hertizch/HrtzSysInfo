@@ -3,9 +3,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Timers;
 using HrtzSysInfo.Extensions;
-using HrtzSysInfo.Properties;
+using HrtzSysInfo.ViewModels;
 using Microsoft.VisualBasic.Devices;
 using OpenHardwareMonitor.Hardware;
+using Computer = OpenHardwareMonitor.Hardware.Computer;
 
 namespace HrtzSysInfo.Utilities
 {
@@ -15,7 +16,7 @@ namespace HrtzSysInfo.Utilities
         {
             Debug.WriteLine("Created Utility Class: SystemTicker");
 
-            if (Settings.Default.SectionVisibility_System)
+            if (GlobalSettingsVm.Instance.GlobalSettings.VisibilitySystem)
                 Initialize();
         }
 
@@ -33,7 +34,7 @@ namespace HrtzSysInfo.Utilities
             _pcRam = new PerformanceCounter("Memory", "Available MBytes");
 
             // Temp
-            _computer = new OpenHardwareMonitor.Hardware.Computer
+            _computer = new Computer
             {
                 CPUEnabled = true,
                 GPUEnabled = true
@@ -42,17 +43,17 @@ namespace HrtzSysInfo.Utilities
             _computer.Open();
 
             // Cpu timer
-            var timerCpu = new Timer { Interval = Settings.Default.PollingRate_Cpu };
+            var timerCpu = new Timer { Interval = GlobalSettingsVm.Instance.GlobalSettings.PollingRateCpu };
             timerCpu.Elapsed += timerCpu_Elapsed;
             timerCpu.Start();
 
             // Ram timer
-            var timerRam = new Timer { Interval = Settings.Default.PollingRate_Ram };
+            var timerRam = new Timer { Interval = GlobalSettingsVm.Instance.GlobalSettings.PollingRateRam };
             timerRam.Elapsed += timerRam_Elapsed;
             timerRam.Start();
 
             // Temp timer
-            var timerTemp = new Timer { Interval = Settings.Default.PollingRate_Temp };
+            var timerTemp = new Timer { Interval = GlobalSettingsVm.Instance.GlobalSettings.PollingRateTemps };
             timerTemp.Elapsed += timerTemp_Elapsed;
             timerTemp.Start();
 
@@ -65,7 +66,7 @@ namespace HrtzSysInfo.Utilities
         // Private fields
         private PerformanceCounter _pcCpu;
         private PerformanceCounter _pcRam;
-        private OpenHardwareMonitor.Hardware.Computer _computer;
+        private Computer _computer;
         private double _cpuUsage;
         private double _cpuClock;
         private double _ramUsage;

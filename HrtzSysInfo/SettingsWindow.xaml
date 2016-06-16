@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:properties="clr-namespace:HrtzSysInfo.Properties"
         mc:Ignorable="d"
-        Title="Settings" Height="385" Width="366"
+        Title="Settings" Height="385" Width="485"
         ResizeMode="NoResize">
     <Grid>
         <ScrollViewer>
@@ -17,7 +17,6 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Margin="15">
-
                     <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Date and Time" />
                     <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=PollingRate_DateTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
@@ -69,6 +68,8 @@
                     <CheckBox Content="Show Network" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=SectionVisibility_Network, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,3,0,5" />
                     <CheckBox Content="Show System" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=SectionVisibility_System, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,3,0,5" />
                     <CheckBox Content="Show Drives" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=SectionVisibility_Drives, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,3,0,5" />
+                    <CheckBox Content="Show in Taskbar" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=Ui_ShowInTaskbar, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,3,0,5" />
+                    <CheckBox Content="Run at Windows Startup" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=Ui_ExecuteAtStartup, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,3,0,5" />
                 </StackPanel>
             </Grid>
         </ScrollViewer>

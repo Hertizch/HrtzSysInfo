@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
 using HrtzSysInfo.Extensions;
 using HrtzSysInfo.Models;
 
@@ -8,16 +10,52 @@ namespace HrtzSysInfo.ViewModels
     {
         public GlobalSettingsVm()
         {
-            GlobalSettings = new GlobalSettings();
+            Debug.WriteLine("Created ViewModel: GlobalSettingsVm");
+
+            GlobalSettings = new GlobalSettings
+            {
+                PollingRateDateTime = 1000,
+                PollingRateWeek = 60000,
+                PollingRateCpu = 1000,
+                PollingRateRam = 1000,
+                PollingRateDrives = 30000,
+                PollingRateTemps = 1000,
+                PollingRateNetwork = 1000,
+                PollingRateIpInternal = 60000,
+                PollingRateIpExternal = 600000,
+                FormattingDate = "dddd dd.MM.yyyy",
+                FormattingTime = "HH:mm",
+                UiTop = 0,
+                UiLeft = 0,
+                UiWidth = 200,
+                UiShowInTaskbar = false,
+                UiRunAtStartup = true,
+                VisibilityNetwork = true,
+                VisibilitySystem = true,
+                VisibilityDrives = true,
+                VisibilityDateTime = true,
+                NetworkSentMaxValue = 4089446,
+                NetworkRecieveMaxValue = 13631488,
+                SystemTempCpuMaxValue = 90,
+                SystemTempGpuMaxValue = 80
+            };
+
+            // Load global settings
+            if (CmdLoadSettings.CanExecute(null))
+                CmdLoadSettings.Execute(null);
         }
 
         // Private fields
         private RelayCommand _cmdSaveSettings;
         private RelayCommand _cmdLoadSettings;
         private GlobalSettings _globalSettings;
-        private string _settingsFilename = "settings.xml";
+
+        // Public fields
+        public string SettingsFilename = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.xml");
 
         // Public properties
+        public static GlobalSettingsVm Instance { get; } = new GlobalSettingsVm();
+
         public GlobalSettings GlobalSettings
         {
             get { return _globalSettings; }
@@ -39,19 +77,25 @@ namespace HrtzSysInfo.ViewModels
             get
             {
                 return _cmdLoadSettings ??
-                       (_cmdLoadSettings = new RelayCommand(ExecuteCmd_LoadSettings, p => File.Exists(_settingsFilename)));
+                       (_cmdLoadSettings = new RelayCommand(ExecuteCmd_LoadSettings, p => File.Exists(SettingsFilename)));
             }
         }
 
         // Methods
         private void ExecuteCmd_SaveSettings(object obj)
         {
-            XmlExtensions.SerializeToXml(GlobalSettings, _settingsFilename);
+            XmlExtensions.SerializeToXml(GlobalSettings, SettingsFilename);
+            Debug.WriteLine("Saved settings to file: " + SettingsFilename);
         }
 
         private void ExecuteCmd_LoadSettings(object obj)
         {
-            GlobalSettings = XmlExtensions.DeserializeFromXml<GlobalSettings>(_settingsFilename);
+            GlobalSettings = XmlExtensions.DeserializeFromXml<GlobalSettings>(SettingsFilename);
+            Debug.WriteLine("Loaded settings from file: " + SettingsFilename);
+
+            Debug.WriteLine("LEft: " + GlobalSettings.UiLeft);
+
+            Debug.WriteLine("CPU: " + GlobalSettings.PollingRateCpu);
         }
     }
 }

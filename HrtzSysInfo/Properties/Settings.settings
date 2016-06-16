@@ -68,5 +68,11 @@
     <Setting Name="PollingRate_ExternalIp" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">600000</Value>
     </Setting>
+    <Setting Name="Ui_ShowInTaskbar" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="Ui_ExecuteAtStartup" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

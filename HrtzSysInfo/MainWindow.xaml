@@ -1,9 +1,9 @@
-﻿<Window x:Class="HrtzSysInfo.MainWindow"
+﻿<Window x:Name="WindowRoot"
+        x:Class="HrtzSysInfo.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:properties="clr-namespace:HrtzSysInfo.Properties"
         xmlns:utilities="clr-namespace:HrtzSysInfo.Utilities"
         xmlns:converters="clr-namespace:HrtzSysInfo.Converters"
         mc:Ignorable="d"
@@ -12,11 +12,13 @@
         MouseLeftButtonDown="MainWindow_OnMouseLeftButtonDown"
         MouseLeftButtonUp="MainWindow_OnMouseLeftButtonUp"
         MouseMove="MainWindow_OnMouseMove"
+        Loaded="MainWindow_OnLoaded"
         Closing="MainWindow_OnClosing"
+        ShowInTaskbar="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.UiShowInTaskbar, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
         MinWidth="170"
-        Width="{Binding Source={x:Static properties:Settings.Default}, Path=Ui_Width, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Delay=100}"
-        Left="{Binding Source={x:Static properties:Settings.Default}, Path=Ui_Left, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Delay=100}"
-        Top="{Binding Source={x:Static properties:Settings.Default}, Path=Ui_Top, UpdateSourceTrigger=PropertyChanged, Delay=100}">
+        Width="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.UiWidth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Delay=100}"
+        Left="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.UiLeft, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Delay=100}"
+        Top="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.UiTop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Delay=100}">
     
     <Window.Resources>
         <utilities:DateTimeTicker x:Key="DateTimeTicker" />
@@ -43,8 +45,6 @@
         <ContextMenu DataContext="{StaticResource ShellVm}">
             <MenuItem Header="Settings" Command="{Binding Path=CmdOpenSettings}" />
             <MenuItem Header="Close" Command="{Binding Path=CmdCloseApp}" />
-            <MenuItem Header="Save" Command="{Binding Source={StaticResource GlobalSettingsVm}, Path=CmdSaveSettings}" />
-            <MenuItem Header="Load" Command="{Binding Source={StaticResource GlobalSettingsVm}, Path=CmdLoadSettings}" />
         </ContextMenu>
     </Window.ContextMenu>
     
@@ -52,7 +52,7 @@
         <StackPanel x:Name="StackPanelRoot" Margin="10" VerticalAlignment="Top">
             
             <!-- Time block -->
-            <Grid Margin="0,0,0,12" DataContext="{StaticResource DateTimeTicker}" Visibility="{Binding Source={x:Static properties:Settings.Default}, Path=SectionVisibility_DateTime, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid Margin="0,0,0,12" DataContext="{StaticResource DateTimeTicker}" Visibility="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.VisibilityDateTime, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition />
@@ -61,13 +61,12 @@
 
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
                     <TextBlock Style="{StaticResource StyleSectionValueTextBlock}" Text="{Binding Path=Now, Converter={StaticResource DateTimeToStringFormatConverter}, ConverterParameter=date}" HorizontalAlignment="Center" />
-                    <TextBlock Style="{StaticResource StyleSectionValueTextBlock}" Text="  " />
-                    <TextBlock Style="{StaticResource StyleSectionValueTextBlock}" Text="{Binding Path=Week, StringFormat={}({0})}" HorizontalAlignment="Center" />
+                    <TextBlock Style="{StaticResource StyleSectionValueTextBlock}" Text="{Binding Path=Week, StringFormat={} ({0})}" HorizontalAlignment="Center" />
                 </StackPanel>
             </Grid>
 
             <!-- Network block -->
-            <Grid Margin="0,0,0,12" DataContext="{StaticResource NetworkTicker}" Visibility="{Binding Source={x:Static properties:Settings.Default}, Path=SectionVisibility_Network, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid Margin="0,0,0,12" DataContext="{StaticResource NetworkTicker}" Visibility="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.VisibilityNetwork, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition />
@@ -91,15 +90,15 @@
 
                 <TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource StyleSectionDescriptionTextBlock}" Text="Upload" />
                 <TextBlock Grid.Row="3" Grid.Column="1" Style="{StaticResource StyleSectionValueTextBlock}" Text="{Binding Path=Sent, Converter={StaticResource BytesToSuffixConverter}, ConverterParameter=double, StringFormat={}{0}/s}" />
-                <ProgressBar Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource StyleSectionValueProgressBar}" Value="{Binding Path=Sent}" Maximum="{Binding Source={x:Static properties:Settings.Default}, Path=NetworkUpMaxValue}" />
+                <ProgressBar Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource StyleSectionValueProgressBar}" Value="{Binding Path=Sent}" Maximum="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.NetworkSentMaxValue}" />
 
                 <TextBlock Grid.Row="5" Grid.Column="0" Style="{StaticResource StyleSectionDescriptionTextBlock}" Text="Download" />
                 <TextBlock Grid.Row="5" Grid.Column="1" Style="{StaticResource StyleSectionValueTextBlock}" Text="{Binding Path=Recieved, Converter={StaticResource BytesToSuffixConverter}, ConverterParameter=double, StringFormat={}{0}/s}" />
-                <ProgressBar Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource StyleSectionValueProgressBar}" Value="{Binding Path=Recieved}" Maximum="{Binding Source={x:Static properties:Settings.Default}, Path=NetworkDownMaxValue}" />
+                <ProgressBar Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource StyleSectionValueProgressBar}" Value="{Binding Path=Recieved}" Maximum="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.NetworkRecieveMaxValue}" />
             </Grid>
 
             <!-- System block -->
-            <Grid Margin="0,0,0,12" DataContext="{StaticResource SystemTicker}" Visibility="{Binding Source={x:Static properties:Settings.Default}, Path=SectionVisibility_System, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid Margin="0,0,0,12" DataContext="{StaticResource SystemTicker}" Visibility="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.VisibilitySystem, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition />
@@ -127,15 +126,15 @@
 
                 <TextBlock Grid.Row="5" Grid.Column="0" Style="{StaticResource StyleSectionDescriptionTextBlock}" Text="CPU Temp" />
                 <TextBlock Grid.Row="5" Grid.Column="1" Style="{StaticResource StyleSectionValueTextBlock}" Text="{Binding Path=CpuTemp, StringFormat={}{0:0} °C}" />
-                <ProgressBar Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource StyleSectionValueProgressBar}" Value="{Binding Path=CpuTemp}" Maximum="{Binding Source={x:Static properties:Settings.Default}, Path=CpuTempMaxValue}" />
+                <ProgressBar Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource StyleSectionValueProgressBar}" Value="{Binding Path=CpuTemp}" Maximum="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.SystemTempCpuMaxValue}" />
 
                 <TextBlock Grid.Row="7" Grid.Column="0" Style="{StaticResource StyleSectionDescriptionTextBlock}" Text="GPU Temp" />
                 <TextBlock Grid.Row="7" Grid.Column="1" Style="{StaticResource StyleSectionValueTextBlock}" Text="{Binding Path=GpuTemp, StringFormat={}{0:0} °C}" />
-                <ProgressBar Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource StyleSectionValueProgressBar}" Value="{Binding Path=GpuTemp}" Maximum="{Binding Source={x:Static properties:Settings.Default}, Path=GpuTempMaxValue}" />
+                <ProgressBar Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource StyleSectionValueProgressBar}" Value="{Binding Path=GpuTemp}" Maximum="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.SystemTempGpuMaxValue}" />
             </Grid>
 
             <!-- Drives block -->
-            <Grid Margin="0,0,0,12" DataContext="{StaticResource DriveTicker}" Visibility="{Binding Source={x:Static properties:Settings.Default}, Path=SectionVisibility_Drives, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid Margin="0,0,0,12" DataContext="{StaticResource DriveTicker}" Visibility="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.VisibilityDrives, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition />

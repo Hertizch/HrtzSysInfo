@@ -5,6 +5,7 @@ using System.IO;
 using System.Timers;
 using HrtzSysInfo.Extensions;
 using HrtzSysInfo.Properties;
+using HrtzSysInfo.ViewModels;
 
 namespace HrtzSysInfo.Utilities
 {
@@ -14,13 +15,13 @@ namespace HrtzSysInfo.Utilities
         {
             Debug.WriteLine("Created Utility Class: DriveTicker");
 
-            if (Settings.Default.SectionVisibility_Drives)
+            if (GlobalSettingsVm.Instance.GlobalSettings.VisibilityDrives)
                 Initialize();
         }
 
         private void Initialize()
         {
-            var timerDriveInfo = new Timer { Interval = Settings.Default.PollingRate_Drives };
+            var timerDriveInfo = new Timer { Interval = GlobalSettingsVm.Instance.GlobalSettings.PollingRateDrives };
             timerDriveInfo.Elapsed += timerDriveInfo_Elapsed;
             timerDriveInfo.Start();
 
