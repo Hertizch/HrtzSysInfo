@@ -33,18 +33,17 @@ namespace HrtzSysInfo.Utilities
             var deviceName = string.Empty;
 
             foreach (var ni in NetworkInterface.GetAllNetworkInterfaces().Where(x => x.OperationalStatus.Equals(OperationalStatus.Up)).Where(x => x.NetworkInterfaceType.Equals(NetworkInterfaceType.Wireless80211) || x.NetworkInterfaceType.Equals(NetworkInterfaceType.Ethernet)))
-                deviceName = ni.Description;
+                deviceName = ni.Description.Replace('(', '[').Replace(')', ']');
 
             if (string.IsNullOrEmpty(deviceName))
             {
                 Debug.WriteLine("No network adaper match criteria.");
-                return;
             }
-
-            Debug.WriteLine(deviceName);
-
-            _pcSent = new PerformanceCounter("Network Interface", "Bytes Sent/sec", deviceName);
-            _pcRecieved = new PerformanceCounter("Network Interface", "Bytes Received/sec", deviceName);
+            else
+            {
+                _pcSent = new PerformanceCounter("Network Interface", "Bytes Sent/sec", deviceName);
+                _pcRecieved = new PerformanceCounter("Network Interface", "Bytes Received/sec", deviceName);
+            }
 
             // Traffic timer
             var timerTraffic = new Timer { Interval = GlobalSettingsVm.Instance.GlobalSettings.PollingRateNetwork };
@@ -103,12 +102,28 @@ namespace HrtzSysInfo.Utilities
         // Methods
         private void timerTraffic_Elapsed(object sender, ElapsedEventArgs e)
         {
-            double sentValue;
-            double.TryParse(_pcSent.NextValue().ToString(CultureInfo.InvariantCulture), out sentValue);
+            // Up
+            double sentValue = 0;
+            string sentValueString = null;
+
+            if (_pcSent != null)
+                sentValueString = _pcSent.NextValue().ToString(CultureInfo.InvariantCulture);
+
+            if (sentValueString != null)
+                double.TryParse(sentValueString, out sentValue);
+
             Sent = sentValue;
 
-            double recievedValue;
-            double.TryParse(_pcRecieved.NextValue().ToString(CultureInfo.InvariantCulture), out recievedValue);
+            // Down
+            double recievedValue = 0;
+            string recievedValueString = null;
+
+            if (_pcRecieved != null)
+                recievedValueString = _pcRecieved.NextValue().ToString(CultureInfo.InvariantCulture);
+
+            if (recievedValueString != null)
+                double.TryParse(recievedValueString, out recievedValue);
+
             Recieved = recievedValue;
         }
 
@@ -128,13 +143,28 @@ namespace HrtzSysInfo.Utilities
             }
             finally
             {
-                ExternalIpAddress = !string.IsNullOrWhiteSpace(ExternalIpAddress) ? ExternalIpAddress.Trim() : "N/A";
+                ExternalIpAddress = !string.IsNullOrEmpty(ExternalIpAddress) ? ExternalIpAddress.Trim() : "N/A";
             }
         }
 
         private void timerInternalIp_Elapsed(object sender, ElapsedEventArgs e)
         {
-            InternalIpAddress = NetworkExtensions.GetLocalIpAddress().ToString();
+            string ip = null;
+
+            try
+            {
+                ip = NetworkExtensions.GetLocalIpAddress();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            finally
+            {
+                InternalIpAddress = !string.IsNullOrEmpty(ip)
+                    ? ip
+                    : "N/A";
+            }
         }
     }
 }

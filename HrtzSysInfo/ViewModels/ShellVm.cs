@@ -31,7 +31,10 @@ namespace HrtzSysInfo.ViewModels
 
         private static void ExecuteCmd_CloseApp(object obj)
         {
-            Application.Current.MainWindow.Close();
+            Application.Current.Shutdown(0);
+
+            /*Process.Start(Application.ResourceAssembly.Location);
+            Application.Current.MainWindow.Close();*/
         }
 
         private static void ExecuteCmd_OpenSettings(object obj)

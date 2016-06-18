@@ -14,19 +14,34 @@ namespace HrtzSysInfo.Models
         private int _pollingRateNetwork;
         private int _pollingRateIpInternal;
         private int _pollingRateIpExternal;
+
         private string _formattingDate;
         private string _formattingTime;
+
         private double _uiTop;
         private double _uiLeft;
         private double _uiWidth;
         private bool _uiShowInTaskbar;
         private bool _uiRunAtStartup;
+
         private bool _visibilityNetwork;
         private bool _visibilitySystem;
         private bool _visibilityDrives;
         private bool _visibilityDateTime;
+
+        private bool _visibilityNetworkExternalIp;
+        private bool _visibilityNetworkInternalIp;
+        private bool _visibilityNetworkUpload;
+        private bool _visibilityNetworkDownload;
+
+        private bool _visibilitySystemCpuUsage;
+        private bool _visibilitySystemRamUsage;
+        private bool _visibilitySystemCpuTemp;
+        private bool _visibilitySystemGpuTemp;
+
         private long _networkSentMaxValue;
         private long _networkRecieveMaxValue;
+
         private int _systemTempCpuMaxValue;
         private int _systemTempGpuMaxValue;
 
@@ -149,6 +164,54 @@ namespace HrtzSysInfo.Models
         {
             get { return _visibilityDateTime; }
             set { SetField(ref _visibilityDateTime, value); }
+        }
+
+        public bool VisibilityNetworkExternalIp
+        {
+            get { return _visibilityNetworkExternalIp; }
+            set { SetField(ref _visibilityNetworkExternalIp, value); }
+        }
+
+        public bool VisibilityNetworkInternalIp
+        {
+            get { return _visibilityNetworkInternalIp; }
+            set { SetField(ref _visibilityNetworkInternalIp, value); }
+        }
+
+        public bool VisibilityNetworkUpload
+        {
+            get { return _visibilityNetworkUpload; }
+            set { SetField(ref _visibilityNetworkUpload, value); }
+        }
+
+        public bool VisibilityNetworkDownload
+        {
+            get { return _visibilityNetworkDownload; }
+            set { SetField(ref _visibilityNetworkDownload, value); }
+        }
+
+        public bool VisibilitySystemCpuUsage
+        {
+            get { return _visibilitySystemCpuUsage; }
+            set { SetField(ref _visibilitySystemCpuUsage, value); }
+        }
+
+        public bool VisibilitySystemRamUsage
+        {
+            get { return _visibilitySystemRamUsage; }
+            set { SetField(ref _visibilitySystemRamUsage, value); }
+        }
+
+        public bool VisibilitySystemCpuTemp
+        {
+            get { return _visibilitySystemCpuTemp; }
+            set { SetField(ref _visibilitySystemCpuTemp, value); }
+        }
+
+        public bool VisibilitySystemGpuTemp
+        {
+            get { return _visibilitySystemGpuTemp; }
+            set { SetField(ref _visibilitySystemGpuTemp, value); }
         }
 
         public long NetworkSentMaxValue

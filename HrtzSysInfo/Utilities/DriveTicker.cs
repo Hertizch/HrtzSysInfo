@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Timers;
 using HrtzSysInfo.Extensions;
-using HrtzSysInfo.Properties;
 using HrtzSysInfo.ViewModels;
 
 namespace HrtzSysInfo.Utilities

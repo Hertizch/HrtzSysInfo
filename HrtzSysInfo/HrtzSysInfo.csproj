@@ -67,6 +67,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\ValueContainer.xaml.cs">
+      <DependentUpon>ValueContainer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\BytesToSuffixConverter.cs" />
     <Compile Include="Converters\DateTimeToStringFormatConverter.cs" />
@@ -75,12 +78,14 @@
     <Compile Include="Converters\HeightConverter.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\EventExtensions.cs" />
+    <Compile Include="Extensions\MtObservableCollection.cs" />
     <Compile Include="Extensions\NetworkExtensions.cs" />
     <Compile Include="Extensions\ObservableObject.cs" />
     <Compile Include="Extensions\RegistryExtensions.cs" />
     <Compile Include="Extensions\RelayCommand.cs" />
     <Compile Include="Extensions\XmlExtensions.cs" />
     <Compile Include="Models\GlobalSettings.cs" />
+    <Compile Include="Models\Gpu.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
@@ -91,6 +96,10 @@
     <Compile Include="Utilities\SystemTicker.cs" />
     <Compile Include="ViewModels\GlobalSettingsVm.cs" />
     <Compile Include="ViewModels\ShellVm.cs" />
+    <Page Include="Controls\ValueContainer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -104,6 +113,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="SettingsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\Grid.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

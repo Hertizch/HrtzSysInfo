@@ -10,16 +10,18 @@ namespace HrtzSysInfo.Extensions
 {
     public static class NetworkExtensions
     {
-        public static IPAddress GetLocalIpAddress()
+        public static string GetLocalIpAddress()
         {
             if (!NetworkInterface.GetIsNetworkAvailable())
                 return null;
 
             var host = Dns.GetHostEntry(Dns.GetHostName());
 
-            return host
+            var ipAddress = host
                 .AddressList
-                .FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+                .FirstOrDefault(x => x.AddressFamily.Equals(AddressFamily.InterNetwork));
+
+            return ipAddress?.ToString();
         }
 
         public static async void CalculateMaxTranserSpeed()

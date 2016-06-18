@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Timers;
 using HrtzSysInfo.Extensions;
+using HrtzSysInfo.Models;
 using HrtzSysInfo.ViewModels;
 using Microsoft.VisualBasic.Devices;
 using OpenHardwareMonitor.Hardware;
-using Computer = OpenHardwareMonitor.Hardware.Computer;
 
 namespace HrtzSysInfo.Utilities
 {
@@ -34,13 +35,15 @@ namespace HrtzSysInfo.Utilities
             _pcRam = new PerformanceCounter("Memory", "Available MBytes");
 
             // Temp
-            _computer = new Computer
+            _computer = new OpenHardwareMonitor.Hardware.Computer
             {
                 CPUEnabled = true,
                 GPUEnabled = true
             };
 
             _computer.Open();
+
+            Gpus = new MtObservableCollection<Gpu>();
 
             // Cpu timer
             var timerCpu = new Timer { Interval = GlobalSettingsVm.Instance.GlobalSettings.PollingRateCpu };
@@ -66,12 +69,13 @@ namespace HrtzSysInfo.Utilities
         // Private fields
         private PerformanceCounter _pcCpu;
         private PerformanceCounter _pcRam;
-        private Computer _computer;
+        private OpenHardwareMonitor.Hardware.Computer _computer;
         private double _cpuUsage;
         private double _cpuClock;
         private double _ramUsage;
         private int _cpuTemp;
         private int _gpuTemp;
+        private MtObservableCollection<Gpu> _gpus;
 
         // Public properties
         public double CpuUsage
@@ -102,6 +106,12 @@ namespace HrtzSysInfo.Utilities
         {
             get { return _gpuTemp; }
             set { SetField(ref _gpuTemp, value); }
+        }
+
+        public MtObservableCollection<Gpu> Gpus
+        {
+            get { return _gpus; }
+            set { SetField(ref _gpus, value); }
         }
 
         // Methods
@@ -145,10 +155,7 @@ namespace HrtzSysInfo.Utilities
                 // CPU
                 if (hardware.HardwareType.Equals(HardwareType.CPU))
                 {
-                    foreach (
-                        var sensor in
-                            hardware.Sensors.Where(
-                                x => x.SensorType.Equals(SensorType.Temperature) && x.Name.Contains("Package")))
+                    foreach (var sensor in hardware.Sensors.Where(x => x.SensorType.Equals(SensorType.Temperature) && x.Name.Contains("Package")))
                     {
                         int cpuTemp;
                         int.TryParse(sensor.Value.ToString(), out cpuTemp);
@@ -157,18 +164,27 @@ namespace HrtzSysInfo.Utilities
                 }
 
                 // GPU
-                if (hardware.HardwareType.Equals(HardwareType.GpuNvidia) | hardware.HardwareType.Equals(HardwareType.GpuAti))
+                if ((hardware.HardwareType.Equals(HardwareType.GpuNvidia) | hardware.HardwareType.Equals(HardwareType.GpuAti)))
                 {
-                    foreach (
-                        var sensor in
-                            hardware.Sensors.Where(
-                                x =>
-                                    x.SensorType.Equals(SensorType.Temperature) &&
-                                    !x.Identifier.ToString().Contains("1")))
+                    foreach (var sensor in hardware.Sensors.Where(x => x.SensorType.Equals(SensorType.Temperature)))
                     {
                         int gpuTemp;
                         int.TryParse(sensor.Value.ToString(), out gpuTemp);
-                        GpuTemp = gpuTemp;
+
+                        int identifier;
+                        int.TryParse(sensor.Identifier.ToString(), out identifier);
+
+                        // If new, add
+                        if (!Gpus.Any(x => x.Identifier.Equals(identifier)))
+                            Gpus.Add(new Gpu
+                            {
+                                Identifier = identifier,
+                                Temperature = gpuTemp
+                            });
+
+                        // If existing, update temp
+                        foreach (var gpu in Gpus.Where(x => x.Identifier.Equals(identifier)))
+                            gpu.Temperature = gpuTemp;
                     }
                 }
             }
