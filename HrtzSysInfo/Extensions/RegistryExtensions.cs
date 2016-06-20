@@ -10,13 +10,9 @@ namespace HrtzSysInfo.Extensions
             var registryKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
 
             if (register)
-            {
-                registryKey?.SetValue(applicationName, Assembly.GetExecutingAssembly().Location);
-            }
+                registryKey?.SetValue(applicationName, "\"" + Assembly.GetExecutingAssembly().Location + "\"");
             else
-            {
                 registryKey?.DeleteValue(applicationName);
-            }
         }
     }
 }
