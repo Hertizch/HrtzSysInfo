@@ -4,11 +4,9 @@ Shows the following information on your desktop:
 - CPU usage
 - RAM usage
 - CPU temp
-- GPU temp
+- GPU's temp
 - Local IP address
 - Remote IP address
 - Network usage (up/down)
-- Clock
-- Date
-- Week number
-- Harddrive usage
+- Clock, date and week
+- Harddrives usage
