@@ -1,14 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Reflection;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 using HrtzSysInfo.Extensions;
-using HrtzSysInfo.Properties;
-using HrtzSysInfo.ViewModels;
+using HrtzSysInfo.Tools;
 
 namespace HrtzSysInfo
 {
@@ -20,19 +15,13 @@ namespace HrtzSysInfo
         public MainWindow()
         {
             InitializeComponent();
-
-            //NetworkExtensions.CalculateMaxTranserSpeed();
         }
 
-        // this is the offset of the mouse cursor from the top left corner of the window
         private Point _offset;
 
         private void MainWindow_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            // capturing the mouse here will redirect all events to this window, even if
-            // the mouse cursor should leave the window area
             Mouse.Capture(this, CaptureMode.Element);
-
             var cursorPos = PointToScreen(Mouse.GetPosition(this));
             var windowPos = new Point(Left, Top);
             _offset = (Point)(cursorPos - windowPos);
@@ -70,17 +59,10 @@ namespace HrtzSysInfo
         private void MainWindow_OnClosing(object sender, CancelEventArgs e)
         {
             // Set registry value
-            RegistryExtensions.RegisterInStartup("HrtzSysInfo", Settings.Default.Ui_ExecuteAtStartup);
+            RegistryExtensions.RegisterInStartup("HrtzSysInfo", UserSettings.GlobalSettings.UiRunAtStartup);
 
             // Save global settings
-            if (GlobalSettingsVm.Instance.CmdSaveSettings.CanExecute(null))
-                GlobalSettingsVm.Instance.CmdSaveSettings.Execute(null);
-        }
-
-        private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
-        {
-           /* var bindingExpression = ((Window)sender).GetBindingExpression(LeftProperty);
-            bindingExpression?.UpdateTarget();*/
+            UserSettings.SaveSettings();
         }
     }
 }

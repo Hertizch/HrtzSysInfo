@@ -13,13 +13,11 @@
         MouseLeftButtonDown="MainWindow_OnMouseLeftButtonDown"
         MouseLeftButtonUp="MainWindow_OnMouseLeftButtonUp"
         MouseMove="MainWindow_OnMouseMove"
-        Loaded="MainWindow_OnLoaded"
         Closing="MainWindow_OnClosing"
-        ShowInTaskbar="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.UiShowInTaskbar, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-        MinWidth="170"
-        Width="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.UiWidth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Delay=100}"
-        Left="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.UiLeft, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Delay=100}"
-        Top="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.UiTop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Delay=100}">
+        ShowInTaskbar="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.UiShowInTaskbar}"
+        Width="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.UiWidth}"
+        Left="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.UiLeft, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Delay=100}"
+        Top="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.UiTop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Delay=100}">
     
     <Window.Resources>
         <utilities:DateTimeTicker x:Key="DateTimeTicker" />
@@ -32,6 +30,7 @@
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" TriggerValue="False" IsHidden="False" />
         <converters:DateTimeToStringFormatConverter x:Key="DateTimeToStringFormatConverter" />
         <converters:HeightConverter x:Key="HeightConverter" />
+        <converters:TempToStringWithUnitConverter x:Key="TempToStringWithUnitConverter" />
     </Window.Resources>
 
     <Window.MinHeight>
@@ -52,7 +51,7 @@
     <StackPanel x:Name="StackPanelRoot" VerticalAlignment="Top">
             
         <!-- Time block -->
-        <Grid Style="{StaticResource StyleSectionBlockGrid}" Visibility="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.VisibilityDateTime, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <Grid Style="{StaticResource StyleSectionBlockGrid}" Visibility="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.VisibilityDateTime, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Grid Margin="10" DataContext="{StaticResource DateTimeTicker}">
                 <Grid.RowDefinitions>
                     <RowDefinition />
@@ -69,7 +68,7 @@
 
 
         <!-- Network block -->
-        <Grid Style="{StaticResource StyleSectionBlockGrid}" Visibility="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.VisibilityNetwork, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <Grid Style="{StaticResource StyleSectionBlockGrid}" Visibility="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.VisibilityNetwork, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Grid Margin="10" DataContext="{StaticResource NetworkTicker}">
                 <Grid.RowDefinitions>
                     <RowDefinition />
@@ -80,31 +79,31 @@
                     <controls:ValueContainer Description="External IP"
                                              Value="{Binding Path=ExternalIpAddress}"
                                              ShowProgressBar="False"
-                                             Visibility="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.VisibilityNetworkExternalIp, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                             Visibility="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.VisibilityNetworkExternalIp, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                     <controls:ValueContainer Description="Internal IP"
                                              Value="{Binding Path=InternalIpAddress}"
                                              ShowProgressBar="False"
-                                             Visibility="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.VisibilityNetworkInternalIp, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                             Visibility="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.VisibilityNetworkInternalIp, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                     <controls:ValueContainer Description="Upload"
                                              Value="{Binding Path=Sent, Converter={StaticResource BytesToSuffixConverter}, ConverterParameter=double, StringFormat={}{0}/s}"
                                              ProgressValue="{Binding Path=Sent}"
-                                             ProgressMaxValue="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.NetworkSentMaxValue}"
-                                             Visibility="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.VisibilityNetworkUpload, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                             ProgressMaxValue="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.NetworkSentMaxValue}"
+                                             Visibility="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.VisibilityNetworkUpload, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                     <controls:ValueContainer Description="Download"
                                              Value="{Binding Path=Recieved, Converter={StaticResource BytesToSuffixConverter}, ConverterParameter=double, StringFormat={}{0}/s}"
                                              ProgressValue="{Binding Path=Recieved}"
-                                             ProgressMaxValue="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.NetworkRecieveMaxValue}"
-                                             Visibility="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.VisibilityNetworkDownload, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                             ProgressMaxValue="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.NetworkRecieveMaxValue}"
+                                             Visibility="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.VisibilityNetworkDownload, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 </StackPanel>
             </Grid>
         </Grid>
 
 
         <!-- System block -->
-        <Grid Style="{StaticResource StyleSectionBlockGrid}" Visibility="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.VisibilitySystem, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <Grid Style="{StaticResource StyleSectionBlockGrid}" Visibility="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.VisibilitySystem, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Grid Margin="10" DataContext="{StaticResource SystemTicker}">
                 <Grid.RowDefinitions>
                     <RowDefinition />
@@ -117,22 +116,40 @@
                                              Value="{Binding Path=CpuUsage, StringFormat={}{0:0} %}"
                                              ProgressValue="{Binding Path=CpuUsage}"
                                              ProgressMaxValue="100"
-                                             Visibility="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.VisibilitySystemCpuUsage, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                             Visibility="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.VisibilitySystemCpuUsage, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                     <controls:ValueContainer Description="RAM Usage"
                                              Value="{Binding Path=RamUsage, StringFormat={}{0:0} %}"
                                              ProgressValue="{Binding Path=RamUsage}"
                                              ProgressMaxValue="100"
-                                             Visibility="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.VisibilitySystemRamUsage, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                             Visibility="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.VisibilitySystemRamUsage, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                    <controls:ValueContainer Description="CPU Temp"
+                                             ProgressValue="{Binding Path=CpuTemp}"
+                                             ProgressMaxValue="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.SystemTempCpuMaxValue}"
+                                             Visibility="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.VisibilitySystemCpuTemp, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <controls:ValueContainer.Value>
+                            <MultiBinding Converter="{StaticResource TempToStringWithUnitConverter}">
+                                <Binding Path="CpuTemp" />
+                                <Binding Source="{StaticResource UserSettings}" Path="GlobalSettings.FormattingTempUnit" />
+                            </MultiBinding>
+                        </controls:ValueContainer.Value>
+                    </controls:ValueContainer>
 
                     <ItemsControl ItemsSource="{Binding Path=Gpus}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <controls:ValueContainer Description="{Binding Path=Identifier, StringFormat={}GPU ({0}) Temp}"
-                                                         Value="{Binding Path=Temperature, StringFormat={}{0:0} °C}"
                                                          ProgressValue="{Binding Path=Temperature}"
-                                                         ProgressMaxValue="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.SystemTempGpuMaxValue}"
-                                                         Visibility="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.VisibilitySystemGpuTemp, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                         ProgressMaxValue="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.SystemTempGpuMaxValue}"
+                                                         Visibility="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.VisibilitySystemGpuTemp, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <controls:ValueContainer.Value>
+                                        <MultiBinding Converter="{StaticResource TempToStringWithUnitConverter}">
+                                            <Binding Path="Temperature" />
+                                            <Binding Source="{StaticResource UserSettings}" Path="GlobalSettings.FormattingTempUnit" />
+                                        </MultiBinding>
+                                    </controls:ValueContainer.Value>
+                                </controls:ValueContainer>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
@@ -141,7 +158,7 @@
         </Grid>
 
         <!-- Drives block -->
-        <Grid Style="{StaticResource StyleSectionBlockGrid}" Visibility="{Binding Source={StaticResource GlobalSettingsVm}, Path=Instance.GlobalSettings.VisibilityDrives, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="0">
+        <Grid Style="{StaticResource StyleSectionBlockGrid}" Visibility="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.VisibilityDrives, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="0">
             <Grid Margin="10" DataContext="{StaticResource DriveTicker}">
                 <Grid.RowDefinitions>
                     <RowDefinition />
@@ -149,7 +166,7 @@
                 </Grid.RowDefinitions>
                 <TextBlock Style="{StaticResource StyleSectionHeaderTextBlock}" Text="DRIVES" />
 
-                <ItemsControl Grid.Row="1" ItemsSource="{Binding Path=DriveInfos, Mode=OneWay}">
+                <ItemsControl Grid.Row="1" ItemsSource="{Binding Path=Drives}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Grid>
@@ -166,7 +183,7 @@
                                 <TextBlock Style="{StaticResource StyleSectionDescriptionTextBlock}" Text="{Binding Path=Name}" />
                                 <TextBlock Grid.Row="0" Grid.Column="1" Style="{StaticResource StyleSectionValueTextBlock}">
                                     <TextBlock.Text>
-                                        <MultiBinding Converter="{StaticResource AvailableSpaceInBytesToDiskUsedSpaceSuffixConverter}" Mode="OneWay">
+                                        <MultiBinding Converter="{StaticResource AvailableSpaceInBytesToDiskUsedSpaceSuffixConverter}">
                                             <Binding Path="TotalSize" />
                                             <Binding Path="AvailableFreeSpace" />
                                         </MultiBinding>
@@ -176,7 +193,7 @@
                                 <TextBlock Grid.Row="0" Grid.Column="3" Style="{StaticResource StyleSectionValueTextBlock}" Text="{Binding Path=TotalSize, Converter={StaticResource BytesToSuffixConverter}}" />
                                 <ProgressBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Style="{StaticResource StyleSectionValueProgressBar}">
                                     <ProgressBar.Value>
-                                        <MultiBinding Converter="{StaticResource DiskUsedSpaceToPercentageConverter}" Mode="OneWay">
+                                        <MultiBinding Converter="{StaticResource DiskUsedSpaceToPercentageConverter}">
                                             <Binding Path="TotalSize" />
                                             <Binding Path="AvailableFreeSpace" />
                                         </MultiBinding>

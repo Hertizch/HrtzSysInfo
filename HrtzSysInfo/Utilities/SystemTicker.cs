@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Timers;
 using HrtzSysInfo.Extensions;
 using HrtzSysInfo.Models;
-using HrtzSysInfo.ViewModels;
+using HrtzSysInfo.Tools;
 using Microsoft.VisualBasic.Devices;
 using OpenHardwareMonitor.Hardware;
+using Computer = OpenHardwareMonitor.Hardware.Computer;
 
 namespace HrtzSysInfo.Utilities
 {
@@ -17,8 +17,7 @@ namespace HrtzSysInfo.Utilities
         {
             Debug.WriteLine("Created Utility Class: SystemTicker");
 
-            if (GlobalSettingsVm.Instance.GlobalSettings.VisibilitySystem)
-                Initialize();
+            Initialize();
         }
 
         private void Initialize()
@@ -35,7 +34,7 @@ namespace HrtzSysInfo.Utilities
             _pcRam = new PerformanceCounter("Memory", "Available MBytes");
 
             // Temp
-            _computer = new OpenHardwareMonitor.Hardware.Computer
+            _computer = new Computer
             {
                 CPUEnabled = true,
                 GPUEnabled = true
@@ -46,17 +45,17 @@ namespace HrtzSysInfo.Utilities
             Gpus = new MtObservableCollection<Gpu>();
 
             // Cpu timer
-            var timerCpu = new Timer { Interval = GlobalSettingsVm.Instance.GlobalSettings.PollingRateCpu };
+            var timerCpu = new Timer { Interval = UserSettings.GlobalSettings.PollingRateCpu };
             timerCpu.Elapsed += timerCpu_Elapsed;
             timerCpu.Start();
 
             // Ram timer
-            var timerRam = new Timer { Interval = GlobalSettingsVm.Instance.GlobalSettings.PollingRateRam };
+            var timerRam = new Timer { Interval = UserSettings.GlobalSettings.PollingRateRam };
             timerRam.Elapsed += timerRam_Elapsed;
             timerRam.Start();
 
             // Temp timer
-            var timerTemp = new Timer { Interval = GlobalSettingsVm.Instance.GlobalSettings.PollingRateTemps };
+            var timerTemp = new Timer { Interval = UserSettings.GlobalSettings.PollingRateTemps };
             timerTemp.Elapsed += timerTemp_Elapsed;
             timerTemp.Start();
 
@@ -69,12 +68,11 @@ namespace HrtzSysInfo.Utilities
         // Private fields
         private PerformanceCounter _pcCpu;
         private PerformanceCounter _pcRam;
-        private OpenHardwareMonitor.Hardware.Computer _computer;
+        private Computer _computer;
         private double _cpuUsage;
         private double _cpuClock;
         private double _ramUsage;
-        private int _cpuTemp;
-        private int _gpuTemp;
+        private double _cpuTemp;
         private MtObservableCollection<Gpu> _gpus;
 
         // Public properties
@@ -96,16 +94,10 @@ namespace HrtzSysInfo.Utilities
             set { SetField(ref _ramUsage, value); }
         }
 
-        public int CpuTemp
+        public double CpuTemp
         {
             get { return _cpuTemp; }
             set { SetField(ref _cpuTemp, value); }
-        }
-
-        public int GpuTemp
-        {
-            get { return _gpuTemp; }
-            set { SetField(ref _gpuTemp, value); }
         }
 
         public MtObservableCollection<Gpu> Gpus
@@ -117,18 +109,22 @@ namespace HrtzSysInfo.Utilities
         // Methods
         private void timerCpu_Elapsed(object sender, ElapsedEventArgs e)
         {
+            if (!UserSettings.GlobalSettings.VisibilitySystemCpuUsage) return;
+
             try
             {
                 CpuUsage = _pcCpu.NextValue();
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Logger.Write("SystemTicker() - _pcCpu.NextValue() - Exception raised", true, ex);
             }
         }
 
         private void timerRam_Elapsed(object sender, ElapsedEventArgs e)
         {
+            if (!UserSettings.GlobalSettings.VisibilitySystemRamUsage) return;
+
             var max = (new ComputerInfo().TotalPhysicalMemory / 1024) / 1024;
 
             float available = 0;
@@ -139,7 +135,7 @@ namespace HrtzSysInfo.Utilities
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Logger.Write("SystemTicker() - _pcRam.NextValue() - Exception raised", true, ex);
             }
 
             RamUsage = (max - available)/max*100;
@@ -153,38 +149,44 @@ namespace HrtzSysInfo.Utilities
                 hardware.GetReport();
 
                 // CPU
-                if (hardware.HardwareType.Equals(HardwareType.CPU))
+                if (UserSettings.GlobalSettings.VisibilitySystemCpuTemp)
                 {
-                    foreach (var sensor in hardware.Sensors.Where(x => x.SensorType.Equals(SensorType.Temperature) && x.Name.Contains("Package")))
+                    if (hardware.HardwareType.Equals(HardwareType.CPU))
                     {
-                        int cpuTemp;
-                        int.TryParse(sensor.Value.ToString(), out cpuTemp);
-                        CpuTemp = cpuTemp;
+                        foreach (var sensor in hardware.Sensors.Where(x => x.SensorType.Equals(SensorType.Temperature) && x.Name.Contains("Package")))
+                        {
+                            double cpuTemp;
+                            double.TryParse(sensor.Value.ToString(), out cpuTemp);
+                            CpuTemp = cpuTemp;
+                        }
                     }
                 }
 
                 // GPU
-                if ((hardware.HardwareType.Equals(HardwareType.GpuNvidia) | hardware.HardwareType.Equals(HardwareType.GpuAti)))
+                if (UserSettings.GlobalSettings.VisibilitySystemGpuTemp)
                 {
-                    foreach (var sensor in hardware.Sensors.Where(x => x.SensorType.Equals(SensorType.Temperature)))
+                    if ((hardware.HardwareType.Equals(HardwareType.GpuNvidia) | hardware.HardwareType.Equals(HardwareType.GpuAti)))
                     {
-                        int gpuTemp;
-                        int.TryParse(sensor.Value.ToString(), out gpuTemp);
+                        var hardwareId = hardware.Identifier.ToString();
+                        int id;
+                        int.TryParse(hardwareId.Substring(hardwareId.Length - 1), out id);
 
-                        int identifier;
-                        int.TryParse(sensor.Identifier.ToString(), out identifier);
+                        var temp = 0;
+                        var sensor = hardware.Sensors.FirstOrDefault(x => x.SensorType.Equals(SensorType.Temperature));
+
+                        if (sensor != null)
+                            int.TryParse(sensor.Value.ToString(), out temp);
 
                         // If new, add
-                        if (!Gpus.Any(x => x.Identifier.Equals(identifier)))
+                        if (!Gpus.Any(x => x.Identifier.Equals(id)))
                             Gpus.Add(new Gpu
                             {
-                                Identifier = identifier,
-                                Temperature = gpuTemp
+                                Identifier = id,
+                                Temperature = temp
                             });
 
-                        // If existing, update temp
-                        foreach (var gpu in Gpus.Where(x => x.Identifier.Equals(identifier)))
-                            gpu.Temperature = gpuTemp;
+                        foreach (var gpu in Gpus.Where(x => x.Identifier.Equals(id)))
+                            gpu.Temperature = temp;
                     }
                 }
             }

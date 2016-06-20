@@ -17,6 +17,7 @@ namespace HrtzSysInfo.Models
 
         private string _formattingDate;
         private string _formattingTime;
+        private string _formattingTempUnit;
 
         private double _uiTop;
         private double _uiLeft;
@@ -110,6 +111,12 @@ namespace HrtzSysInfo.Models
         {
             get { return _formattingTime; }
             set { SetField(ref _formattingTime, value); }
+        }
+
+        public string FormattingTempUnit
+        {
+            get { return _formattingTempUnit; }
+            set { SetField(ref _formattingTempUnit, value); }
         }
 
         public double UiTop

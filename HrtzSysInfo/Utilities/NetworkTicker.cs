@@ -6,8 +6,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Timers;
 using HrtzSysInfo.Extensions;
-using HrtzSysInfo.Properties;
-using HrtzSysInfo.ViewModels;
+using HrtzSysInfo.Tools;
 
 namespace HrtzSysInfo.Utilities
 {
@@ -17,19 +16,11 @@ namespace HrtzSysInfo.Utilities
         {
             Debug.WriteLine("Created Utility Class: NetworkTicker");
 
-            if (GlobalSettingsVm.Instance.GlobalSettings.VisibilityNetwork)
-                Initialize();
+            Initialize();
         }
 
         private void Initialize()
         {
-            //var pcc = new PerformanceCounterCategory("Network Interface");
-            //var instanceNames = pcc.GetInstanceNames();
-
-            /*string instance = null;
-            foreach (var instanceName in instanceNames.Where(instanceName => instanceName.Contains("Intel")))
-                instance = instanceName;*/
-
             var deviceName = string.Empty;
 
             foreach (var ni in NetworkInterface.GetAllNetworkInterfaces().Where(x => x.OperationalStatus.Equals(OperationalStatus.Up)).Where(x => x.NetworkInterfaceType.Equals(NetworkInterfaceType.Wireless80211) || x.NetworkInterfaceType.Equals(NetworkInterfaceType.Ethernet)))
@@ -37,7 +28,7 @@ namespace HrtzSysInfo.Utilities
 
             if (string.IsNullOrEmpty(deviceName))
             {
-                Debug.WriteLine("No network adaper match criteria.");
+                Logger.Write("NetworkTicker() - NetworkInterface.GetAllNetworkInterfaces() - string.IsNullOrEmpty(deviceName)", true);
             }
             else
             {
@@ -46,17 +37,17 @@ namespace HrtzSysInfo.Utilities
             }
 
             // Traffic timer
-            var timerTraffic = new Timer { Interval = GlobalSettingsVm.Instance.GlobalSettings.PollingRateNetwork };
+            var timerTraffic = new Timer { Interval = UserSettings.GlobalSettings.PollingRateNetwork };
             timerTraffic.Elapsed += timerTraffic_Elapsed;
             timerTraffic.Start();
 
             // External IP timer
-            var timerExternalIp = new Timer { Interval = GlobalSettingsVm.Instance.GlobalSettings.PollingRateIpExternal };
+            var timerExternalIp = new Timer { Interval = UserSettings.GlobalSettings.PollingRateIpExternal };
             timerExternalIp.Elapsed += timerExternalIp_Elapsed;
             timerExternalIp.Start();
 
             // Internal IP timer
-            var timerInternalIp = new Timer { Interval = GlobalSettingsVm.Instance.GlobalSettings.PollingRateIpInternal };
+            var timerInternalIp = new Timer { Interval = UserSettings.GlobalSettings.PollingRateIpInternal };
             timerInternalIp.Elapsed += timerInternalIp_Elapsed;
             timerInternalIp.Start();
 
@@ -102,53 +93,69 @@ namespace HrtzSysInfo.Utilities
         // Methods
         private void timerTraffic_Elapsed(object sender, ElapsedEventArgs e)
         {
+            if (!UserSettings.GlobalSettings.VisibilityNetwork) return;
+
             // Up
-            double sentValue = 0;
-            string sentValueString = null;
+            if (UserSettings.GlobalSettings.VisibilityNetworkUpload)
+            {
+                double sentValue = 0;
+                string sentValueString = null;
 
-            if (_pcSent != null)
-                sentValueString = _pcSent.NextValue().ToString(CultureInfo.InvariantCulture);
+                if (_pcSent != null)
+                    sentValueString = _pcSent.NextValue().ToString(CultureInfo.InvariantCulture);
 
-            if (sentValueString != null)
-                double.TryParse(sentValueString, out sentValue);
+                if (sentValueString != null)
+                    double.TryParse(sentValueString, out sentValue);
 
-            Sent = sentValue;
+                Sent = sentValue;
+            }
 
             // Down
-            double recievedValue = 0;
-            string recievedValueString = null;
+            if (UserSettings.GlobalSettings.VisibilityNetworkDownload)
+            {
+                double recievedValue = 0;
+                string recievedValueString = null;
 
-            if (_pcRecieved != null)
-                recievedValueString = _pcRecieved.NextValue().ToString(CultureInfo.InvariantCulture);
+                if (_pcRecieved != null)
+                    recievedValueString = _pcRecieved.NextValue().ToString(CultureInfo.InvariantCulture);
 
-            if (recievedValueString != null)
-                double.TryParse(recievedValueString, out recievedValue);
+                if (recievedValueString != null)
+                    double.TryParse(recievedValueString, out recievedValue);
 
-            Recieved = recievedValue;
+                Recieved = recievedValue;
+            }
         }
 
         private async void timerExternalIp_Elapsed(object sender, ElapsedEventArgs e)
         {
+            if (!UserSettings.GlobalSettings.VisibilityNetworkExternalIp) return;
+
+            string ip = null;
+
             try
             {
                 using (var webClient = new WebClient())
                 {
                     webClient.Proxy = null;
-                    ExternalIpAddress = await webClient.DownloadStringTaskAsync("http://icanhazip.com/");
+                    ip = await webClient.DownloadStringTaskAsync("http://icanhazip.com/");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Logger.Write("NetworkTicker() - webClient.DownloadStringTaskAsync(\"http://icanhazip.com/\") - Exception raised", true, ex);
             }
             finally
             {
-                ExternalIpAddress = !string.IsNullOrEmpty(ExternalIpAddress) ? ExternalIpAddress.Trim() : "N/A";
+                ExternalIpAddress = !string.IsNullOrWhiteSpace(ip)
+                    ? ip.Trim()
+                    : "N/A";
             }
         }
 
         private void timerInternalIp_Elapsed(object sender, ElapsedEventArgs e)
         {
+            if (!UserSettings.GlobalSettings.VisibilityNetworkInternalIp) return;
+
             string ip = null;
 
             try
@@ -157,7 +164,7 @@ namespace HrtzSysInfo.Utilities
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Logger.Write("NetworkTicker() - NetworkExtensions.GetLocalIpAddress() - Exception raised", true, ex);
             }
             finally
             {

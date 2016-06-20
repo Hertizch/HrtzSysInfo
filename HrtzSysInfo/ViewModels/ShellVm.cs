@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using HrtzSysInfo.Extensions;
+using HrtzSysInfo.Tools;
 
 namespace HrtzSysInfo.ViewModels
 {
@@ -32,25 +33,20 @@ namespace HrtzSysInfo.ViewModels
         private static void ExecuteCmd_CloseApp(object obj)
         {
             Application.Current.Shutdown(0);
-
-            /*Process.Start(Application.ResourceAssembly.Location);
-            Application.Current.MainWindow.Close();*/
         }
 
         private static void ExecuteCmd_OpenSettings(object obj)
         {
-            if (File.Exists(GlobalSettingsVm.Instance.SettingsFilename))
-                try
-                {
-                    Process.Start(GlobalSettingsVm.Instance.SettingsFilename);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                }
+            if (!File.Exists(UserSettings.SettingsFilename)) return;
 
-            /*var settingsWindow = new SettingsWindow();
-            settingsWindow.ShowDialog();*/
+            try
+            {
+                Process.Start(UserSettings.SettingsFilename);
+            }
+            catch (Exception ex)
+            {
+                Logger.Write("ShellVm - ExecuteCmd_OpenSettings() - Exception raised", true, ex);
+            }
         }
     }
 }

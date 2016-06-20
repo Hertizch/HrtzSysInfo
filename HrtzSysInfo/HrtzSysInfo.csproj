@@ -76,6 +76,7 @@
     <Compile Include="Converters\DiskAvailableSpaceInBytesToDiskUsedSpaceSuffixConverter.cs" />
     <Compile Include="Converters\DiskUsedSpaceToPercentageConverter.cs" />
     <Compile Include="Converters\HeightConverter.cs" />
+    <Compile Include="Converters\TempToStringWithUnitConverter.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\EventExtensions.cs" />
     <Compile Include="Extensions\MtObservableCollection.cs" />
@@ -84,17 +85,20 @@
     <Compile Include="Extensions\RegistryExtensions.cs" />
     <Compile Include="Extensions\RelayCommand.cs" />
     <Compile Include="Extensions\XmlExtensions.cs" />
+    <Compile Include="Models\Drive.cs" />
     <Compile Include="Models\GlobalSettings.cs" />
     <Compile Include="Models\Gpu.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Tools\ConvertTemp.cs" />
+    <Compile Include="Tools\Logger.cs" />
+    <Compile Include="Tools\UserSettings.cs" />
     <Compile Include="Utilities\DateTimeTicker.cs" />
     <Compile Include="Utilities\DriveTicker.cs" />
     <Compile Include="Utilities\NetworkTicker.cs" />
     <Compile Include="Utilities\SystemTicker.cs" />
-    <Compile Include="ViewModels\GlobalSettingsVm.cs" />
     <Compile Include="ViewModels\ShellVm.cs" />
     <Page Include="Controls\ValueContainer.xaml">
       <SubType>Designer</SubType>
