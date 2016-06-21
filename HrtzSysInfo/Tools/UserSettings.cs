@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using HrtzSysInfo.Extensions;
 using HrtzSysInfo.Models;
 
@@ -12,6 +13,7 @@ namespace HrtzSysInfo.Tools
         {
             Debug.WriteLine("Created Class: UserSettings");
 
+            GlobalSettings.Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             GlobalSettings.PollingRateDateTime = 1000;
             GlobalSettings.PollingRateWeek = 60000;
             GlobalSettings.PollingRateCpu = 1000;
@@ -29,6 +31,8 @@ namespace HrtzSysInfo.Tools
             GlobalSettings.UiWidth = 200;
             GlobalSettings.UiShowInTaskbar = false;
             GlobalSettings.UiRunAtStartup = true;
+            GlobalSettings.UiSectionSeparator = 1;
+            GlobalSettings.VisibilitySectionHeaders = true;
             GlobalSettings.VisibilityNetwork = true;
             GlobalSettings.VisibilitySystem = true;
             GlobalSettings.VisibilityDrives = true;
@@ -45,6 +49,8 @@ namespace HrtzSysInfo.Tools
             GlobalSettings.NetworkRecieveMaxValue = 13631488;
             GlobalSettings.SystemTempCpuMaxValue = 90;
             GlobalSettings.SystemTempGpuMaxValue = 80;
+
+            RemoveOutdatedSettingsFile();
 
             if (File.Exists(SettingsFilename))
             {
@@ -82,6 +88,21 @@ namespace HrtzSysInfo.Tools
             catch (Exception ex)
             {
                 Logger.Write("UserSettings() - SaveSettings() - Exception raised", true, ex);
+            }
+        }
+
+        public static void RemoveOutdatedSettingsFile()
+        {
+            var localVersion = Assembly.GetExecutingAssembly().GetName().Version;
+            if (GlobalSettings.Version != null)
+            {
+                var remoteVersion = Version.Parse(GlobalSettings.Version);
+
+                if (GlobalSettings.Version != null && (localVersion > remoteVersion && File.Exists(SettingsFilename)))
+                {
+                    File.Delete(SettingsFilename);
+                    Debug.WriteLine("Deleted old settings file.");
+                }
             }
         }
     }

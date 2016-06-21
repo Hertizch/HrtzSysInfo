@@ -1,10 +1,14 @@
-﻿using HrtzSysInfo.Extensions;
+﻿using System;
+using System.Windows.Media;
+using HrtzSysInfo.Extensions;
 
 namespace HrtzSysInfo.Models
 {
     public class GlobalSettings : ObservableObject
     {
         // Private fields
+        private string _version;
+
         private int _pollingRateDateTime;
         private int _pollingRateWeek;
         private int _pollingRateCpu;
@@ -24,7 +28,9 @@ namespace HrtzSysInfo.Models
         private double _uiWidth;
         private bool _uiShowInTaskbar;
         private bool _uiRunAtStartup;
+        private double _uiSectionSeparator;
 
+        private bool _visibilitySectionHeaders;
         private bool _visibilityNetwork;
         private bool _visibilitySystem;
         private bool _visibilityDrives;
@@ -47,6 +53,12 @@ namespace HrtzSysInfo.Models
         private int _systemTempGpuMaxValue;
 
         // Public properties
+        public string Version
+        {
+            get { return _version; }
+            set { SetField(ref _version, value); }
+        }
+
         public int PollingRateDateTime
         {
             get { return _pollingRateDateTime; }
@@ -147,6 +159,18 @@ namespace HrtzSysInfo.Models
         {
             get { return _uiRunAtStartup; }
             set { SetField(ref _uiRunAtStartup, value); }
+        }
+
+        public double UiSectionSeparator
+        {
+            get { return _uiSectionSeparator; }
+            set { SetField(ref _uiSectionSeparator, value); }
+        }
+
+        public bool VisibilitySectionHeaders
+        {
+            get { return _visibilitySectionHeaders; }
+            set { SetField(ref _visibilitySectionHeaders, value); }
         }
 
         public bool VisibilityNetwork

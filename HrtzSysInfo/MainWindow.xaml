@@ -66,6 +66,7 @@
             </Grid>
         </Grid>
 
+        <Rectangle Height="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.UiSectionSeparator}" Fill="Transparent" />
 
         <!-- Network block -->
         <Grid Style="{StaticResource StyleSectionBlockGrid}" Visibility="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.VisibilityNetwork, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -74,7 +75,7 @@
                     <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <TextBlock Style="{StaticResource StyleSectionHeaderTextBlock}" Text="NETWORK" />
+                <TextBlock Style="{StaticResource StyleSectionHeaderTextBlock}" Text="NETWORK" Visibility="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.VisibilitySectionHeaders, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 <StackPanel Grid.Row="1">
                     <controls:ValueContainer Description="External IP"
                                              Value="{Binding Path=ExternalIpAddress}"
@@ -101,6 +102,7 @@
             </Grid>
         </Grid>
 
+        <Rectangle Height="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.UiSectionSeparator}" />
 
         <!-- System block -->
         <Grid Style="{StaticResource StyleSectionBlockGrid}" Visibility="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.VisibilitySystem, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -109,7 +111,7 @@
                     <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <TextBlock Style="{StaticResource StyleSectionHeaderTextBlock}" Text="SYSTEM" />
+                <TextBlock Style="{StaticResource StyleSectionHeaderTextBlock}" Text="SYSTEM" Visibility="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.VisibilitySectionHeaders, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 <StackPanel Grid.Row="1">
 
                     <controls:ValueContainer Description="CPU Usage"
@@ -157,6 +159,8 @@
             </Grid>
         </Grid>
 
+        <Rectangle Height="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.UiSectionSeparator}" />
+
         <!-- Drives block -->
         <Grid Style="{StaticResource StyleSectionBlockGrid}" Visibility="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.VisibilityDrives, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="0">
             <Grid Margin="10" DataContext="{StaticResource DriveTicker}">
@@ -164,8 +168,32 @@
                     <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <TextBlock Style="{StaticResource StyleSectionHeaderTextBlock}" Text="DRIVES" />
+                <TextBlock Style="{StaticResource StyleSectionHeaderTextBlock}" Text="DRIVES" Visibility="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.VisibilitySectionHeaders, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
+                <ItemsControl Grid.Row="1" ItemsSource="{Binding Path=Drives}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <controls:ValueContainer Description="{Binding Path=Name}"
+                                                     ProgressMaxValue="100"
+                                                     Visibility="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.VisibilityDrives, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <controls:ValueContainer.Value>
+                                    <MultiBinding Converter="{StaticResource AvailableSpaceInBytesToDiskUsedSpaceSuffixConverter}">
+                                        <Binding Path="TotalSize" />
+                                        <Binding Path="AvailableFreeSpace" />
+                                    </MultiBinding>
+                                </controls:ValueContainer.Value>
+                                <controls:ValueContainer.ProgressValue>
+                                    <MultiBinding Converter="{StaticResource DiskUsedSpaceToPercentageConverter}">
+                                        <Binding Path="TotalSize" />
+                                        <Binding Path="AvailableFreeSpace" />
+                                    </MultiBinding>
+                                </controls:ValueContainer.ProgressValue>
+                            </controls:ValueContainer>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!--
                 <ItemsControl Grid.Row="1" ItemsSource="{Binding Path=Drives}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
@@ -203,6 +231,7 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
+                -->
             </Grid>
         </Grid>
     </StackPanel>

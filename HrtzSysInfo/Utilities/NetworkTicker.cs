@@ -4,9 +4,11 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Threading;
 using System.Timers;
 using HrtzSysInfo.Extensions;
 using HrtzSysInfo.Tools;
+using Timer = System.Timers.Timer;
 
 namespace HrtzSysInfo.Utilities
 {
@@ -21,19 +23,12 @@ namespace HrtzSysInfo.Utilities
 
         private void Initialize()
         {
-            var deviceName = string.Empty;
-
             foreach (var ni in NetworkInterface.GetAllNetworkInterfaces().Where(x => x.OperationalStatus.Equals(OperationalStatus.Up)).Where(x => x.NetworkInterfaceType.Equals(NetworkInterfaceType.Wireless80211) || x.NetworkInterfaceType.Equals(NetworkInterfaceType.Ethernet)))
-                deviceName = ni.Description.Replace('(', '[').Replace(')', ']');
+                _networkInterfaceName = ni.Description.Replace('(', '[').Replace(')', ']');
 
-            if (string.IsNullOrEmpty(deviceName))
+            if (string.IsNullOrEmpty(_networkInterfaceName))
             {
-                Logger.Write("NetworkTicker() - NetworkInterface.GetAllNetworkInterfaces() - string.IsNullOrEmpty(deviceName)", true);
-            }
-            else
-            {
-                _pcSent = new PerformanceCounter("Network Interface", "Bytes Sent/sec", deviceName);
-                _pcRecieved = new PerformanceCounter("Network Interface", "Bytes Received/sec", deviceName);
+                Logger.Write("NetworkTicker() - NetworkInterface.GetAllNetworkInterfaces() - string.IsNullOrEmpty(_networkInterfaceName)", true);
             }
 
             // Traffic timer
@@ -64,6 +59,7 @@ namespace HrtzSysInfo.Utilities
         private double _recieved;
         private string _externalIpAddress;
         private string _interalIpAddress;
+        private string _networkInterfaceName;
 
         // Public properties
         public double Sent
@@ -96,34 +92,36 @@ namespace HrtzSysInfo.Utilities
             if (!UserSettings.GlobalSettings.VisibilityNetwork) return;
 
             // Up
-            if (UserSettings.GlobalSettings.VisibilityNetworkUpload)
-            {
-                double sentValue = 0;
-                string sentValueString = null;
-
-                if (_pcSent != null)
-                    sentValueString = _pcSent.NextValue().ToString(CultureInfo.InvariantCulture);
-
-                if (sentValueString != null)
-                    double.TryParse(sentValueString, out sentValue);
-
-                Sent = sentValue;
-            }
+            if (!(!UserSettings.GlobalSettings.VisibilityNetworkUpload && _networkInterfaceName != null))
+                Sent = GetNetworkSentValue();
 
             // Down
-            if (UserSettings.GlobalSettings.VisibilityNetworkDownload)
-            {
-                double recievedValue = 0;
-                string recievedValueString = null;
+            if (UserSettings.GlobalSettings.VisibilityNetworkDownload && _networkInterfaceName != null)
+                Recieved = GetNetworkRecievedValue();
+        }
 
-                if (_pcRecieved != null)
-                    recievedValueString = _pcRecieved.NextValue().ToString(CultureInfo.InvariantCulture);
+        private double GetNetworkSentValue()
+        {
+            _pcSent = new PerformanceCounter("Network Interface", "Bytes Sent/sec", _networkInterfaceName);
+            double sentValue;
+            _pcSent?.NextValue();
+            Thread.Sleep(500);
+            var sentValueString = _pcSent?.NextValue().ToString(CultureInfo.InvariantCulture);
+            double.TryParse(sentValueString, out sentValue);
+            _pcSent?.Dispose();
+            return sentValue;
+        }
 
-                if (recievedValueString != null)
-                    double.TryParse(recievedValueString, out recievedValue);
-
-                Recieved = recievedValue;
-            }
+        private double GetNetworkRecievedValue()
+        {
+            _pcRecieved = new PerformanceCounter("Network Interface", "Bytes Received/sec", _networkInterfaceName);
+            double recievedValue;
+            _pcRecieved?.NextValue();
+            Thread.Sleep(500);
+            var recievedValueString = _pcRecieved?.NextValue().ToString(CultureInfo.InvariantCulture);
+            double.TryParse(recievedValueString, out recievedValue);
+            _pcRecieved?.Dispose();
+            return recievedValue;
         }
 
         private async void timerExternalIp_Elapsed(object sender, ElapsedEventArgs e)

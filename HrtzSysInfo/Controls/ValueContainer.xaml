@@ -24,12 +24,20 @@
                    Grid.Row="0" Grid.Column="2"
                    Style="{StaticResource StyleSectionValueTextBlock}"
                    Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:ValueContainer}}, Path=Value, FallbackValue=Val}" />
-        
+
         <ProgressBar x:Name="ProgressBarProgressValue"
                      Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
-                     Style="{StaticResource StyleSectionValueProgressBar}"
                      Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:ValueContainer}}, Path=ProgressValue}"
                      Maximum="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:ValueContainer}}, Path=ProgressMaxValue}">
+            <ProgressBar.Style>
+                <Style TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource StyleSectionValueProgressBar}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:ValueContainer}}, Path=ShowProgressBar}" Value="False">
+                            <Setter Property="Visibility" Value="Hidden" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ProgressBar.Style>
         </ProgressBar>
     </Grid>
 </UserControl>
