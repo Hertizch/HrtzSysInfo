@@ -17,7 +17,7 @@ Displays the following information, in a customizable overlay, on your desktop:
 - Window edge-snapping not working as intended for multi-monitor setups.
  
 #Todo
-- Settings UI.
+- Completing settings UI.
 - Theming (Colors, fonts, backgrounds, margins, text-placements).
 
 # License
