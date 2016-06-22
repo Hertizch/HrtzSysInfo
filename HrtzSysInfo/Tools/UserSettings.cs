@@ -13,55 +13,75 @@ namespace HrtzSysInfo.Tools
         {
             Debug.WriteLine("Created Class: UserSettings");
 
-            GlobalSettings.Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            GlobalSettings.PollingRateDateTime = 1000;
-            GlobalSettings.PollingRateWeek = 60000;
-            GlobalSettings.PollingRateCpu = 1000;
-            GlobalSettings.PollingRateRam = 1000;
-            GlobalSettings.PollingRateDrives = 30000;
-            GlobalSettings.PollingRateTemps = 1000;
-            GlobalSettings.PollingRateNetwork = 1000;
-            GlobalSettings.PollingRateIpInternal = 60000;
-            GlobalSettings.PollingRateIpExternal = 600000;
-            GlobalSettings.FormattingDate = "dddd dd.MM.yyyy";
-            GlobalSettings.FormattingTime = "HH:mm";
-            GlobalSettings.FormattingTempUnit = "c";
-            GlobalSettings.UiTop = 0;
-            GlobalSettings.UiLeft = 0;
-            GlobalSettings.UiWidth = 200;
-            GlobalSettings.UiShowInTaskbar = false;
-            GlobalSettings.UiRunAtStartup = true;
-            GlobalSettings.UiSectionSeparator = 1;
-            GlobalSettings.VisibilitySectionHeaders = true;
-            GlobalSettings.VisibilityNetwork = true;
-            GlobalSettings.VisibilitySystem = true;
-            GlobalSettings.VisibilityDrives = true;
-            GlobalSettings.VisibilityDateTime = true;
-            GlobalSettings.VisibilityNetworkExternalIp = true;
-            GlobalSettings.VisibilityNetworkInternalIp = true;
-            GlobalSettings.VisibilityNetworkUpload = true;
-            GlobalSettings.VisibilityNetworkDownload = true;
-            GlobalSettings.VisibilitySystemCpuUsage = true;
-            GlobalSettings.VisibilitySystemRamUsage = true;
-            GlobalSettings.VisibilitySystemCpuTemp = true;
-            GlobalSettings.VisibilitySystemGpuTemp = true;
-            GlobalSettings.NetworkSentMaxValue = 4089446;
-            GlobalSettings.NetworkRecieveMaxValue = 13631488;
-            GlobalSettings.SystemTempCpuMaxValue = 90;
-            GlobalSettings.SystemTempGpuMaxValue = 80;
-
-            RemoveOutdatedSettingsFile();
-
             if (File.Exists(SettingsFilename))
             {
                 LoadSettings();
-                return;
+
+                // Delete settings file if unmatched versions
+                var runningVersion = Assembly.GetExecutingAssembly().GetName().Version;
+                if (runningVersion > Version.Parse(GlobalSettings.Version))
+                {
+                    File.Delete(SettingsFilename);
+                    Debug.WriteLine("Deleted old settings file.");
+
+                    GlobalSettings = GetDefaultSettings();
+                }
+            }
+            else
+            {
+                GlobalSettings = GetDefaultSettings();
             }
 
             SaveSettings();
         }
 
-        public static GlobalSettings GlobalSettings { get; set; } = new GlobalSettings();
+        private static GlobalSettings GetDefaultSettings()
+        {
+            Debug.WriteLine("Applied default settings");
+
+            return new GlobalSettings
+            {
+                Version = Assembly.GetExecutingAssembly().GetName().Version.ToString(),
+                PollingRateDateTime = 1000,
+                PollingRateWeek = 60000,
+                PollingRateCpu = 1000,
+                PollingRateRam = 1000,
+                PollingRateDrives = 30000,
+                PollingRateTemps = 1000,
+                PollingRateNetwork = 1000,
+                PollingRateIpInternal = 60000,
+                PollingRateIpExternal = 600000,
+                FormattingDate = "dddd dd.MM.yyyy",
+                FormattingTime = "HH:mm",
+                FormattingTempUnit = "c",
+                UiTop = 0,
+                UiLeft = 0,
+                UiWidth = 200,
+                UiShowInTaskbar = false,
+                UiRunAtStartup = true,
+                UiSectionSeparator = 1,
+                VisibilitySectionHeaders = true,
+                VisibilityNetwork = true,
+                VisibilitySystem = true,
+                VisibilityDrives = true,
+                VisibilityDateTime = true,
+                VisibilityNetworkExternalIp = true,
+                VisibilityNetworkInternalIp = true,
+                VisibilityNetworkUpload = true,
+                VisibilityNetworkDownload = true,
+                VisibilitySystemCpuUsage = true,
+                VisibilitySystemRamUsage = true,
+                VisibilitySystemCpuTemp = true,
+                VisibilitySystemGpuTemp = true,
+                VisibilitySystemGpuLoad = true,
+                NetworkSentMaxValue = 4089446,
+                NetworkRecieveMaxValue = 13631488,
+                SystemTempCpuMaxValue = 90,
+                SystemTempGpuMaxValue = 80
+            };
+        }
+
+        public static GlobalSettings GlobalSettings { get; set; }
 
         public static readonly string SettingsFilename = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.xml");
 
@@ -91,19 +111,22 @@ namespace HrtzSysInfo.Tools
             }
         }
 
-        public static void RemoveOutdatedSettingsFile()
+        public static void MergeGlobalSettings()
         {
-            var localVersion = Assembly.GetExecutingAssembly().GetName().Version;
+            /*
+            var runningVersion = Assembly.GetExecutingAssembly().GetName().Version;
+
             if (GlobalSettings.Version != null)
             {
-                var remoteVersion = Version.Parse(GlobalSettings.Version);
+                var savedVersion = Version.Parse(GlobalSettings.Version);
 
-                if (GlobalSettings.Version != null && (localVersion > remoteVersion && File.Exists(SettingsFilename)))
+                if (GlobalSettings.Version != null && (runningVersion > savedVersion && File.Exists(SettingsFilename)))
                 {
                     File.Delete(SettingsFilename);
                     Debug.WriteLine("Deleted old settings file.");
                 }
             }
+            */
         }
     }
 }

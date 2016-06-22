@@ -39,6 +39,10 @@ namespace HrtzSysInfo.ViewModels
         {
             if (!File.Exists(UserSettings.SettingsFilename)) return;
 
+            var settingsWindow = new SettingsWindow();
+            settingsWindow.Show();
+            return;
+
             try
             {
                 Process.Start(UserSettings.SettingsFilename);

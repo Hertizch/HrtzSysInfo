@@ -3,73 +3,131 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:properties="clr-namespace:HrtzSysInfo.Properties"
         mc:Ignorable="d"
-        Title="Settings" Height="385" Width="485"
-        ResizeMode="NoResize">
+        Title="Settings" Height="531" Width="850"
+        ResizeMode="NoResize" DataContext="{StaticResource UserSettings}">
     <Grid>
         <ScrollViewer>
-
-            <Grid>
+            <Grid Margin="15">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Margin="15">
-                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Date and Time" />
-                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=PollingRate_DateTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <StackPanel>
+                    <GroupBox Header="Network">
+                        <StackPanel Margin="10">
+                            <CheckBox x:Name="CheckBoxShowNetwork" Content="Show Network" IsChecked="{Binding Path=GlobalSettings.VisibilityNetwork, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,3" />
+                            <CheckBox Content="Show External IP" IsChecked="{Binding Path=GlobalSettings.VisibilityNetworkExternalIp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxShowNetwork, Path=IsChecked}" Margin="0,3" />
+                            <CheckBox Content="Show Internal IP" IsChecked="{Binding Path=GlobalSettings.VisibilityNetworkInternalIp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxShowNetwork, Path=IsChecked}" Margin="0,3" />
+                            <CheckBox Content="Show Download Speed" IsChecked="{Binding Path=GlobalSettings.VisibilityNetworkDownload, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxShowNetwork, Path=IsChecked}" Margin="0,3" />
+                            <CheckBox Content="Show Upload Speed" IsChecked="{Binding Path=GlobalSettings.VisibilityNetworkUpload, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxShowNetwork, Path=IsChecked}" Margin="0,3" />
 
-                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Date format" />
-                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=Formatting_Date, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <Separator Margin="0,5" />
 
-                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Time format" />
-                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=Formatting_Time, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Speed refresh rate" />
+                            <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Path=GlobalSettings.PollingRateNetwork, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxShowNetwork, Path=IsChecked}" />
 
-                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Week" />
-                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=PollingRate_Week, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="External IP refresh rate" />
+                            <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Path=GlobalSettings.PollingRateIpExternal, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxShowNetwork, Path=IsChecked}" />
 
-                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Network" />
-                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=PollingRate_Network, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Internal IP refresh rate" />
+                            <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Path=GlobalSettings.PollingRateIpInternal, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxShowNetwork, Path=IsChecked}" />
 
-                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="External IP Address" />
-                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=PollingRate_ExternalIp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Upload max speed (in bytes)" />
+                            <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Path=GlobalSettings.NetworkSentMaxValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxShowNetwork, Path=IsChecked}" />
 
-                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Internal IP Address" />
-                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=PollingRate_InternalIp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Download max speed (in bytes)" />
+                            <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Path=GlobalSettings.NetworkRecieveMaxValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxShowNetwork, Path=IsChecked}" />
+                        </StackPanel>
+                    </GroupBox>
+                </StackPanel>
+                
+                <StackPanel Grid.Column="1">
+                    <GroupBox Header="System">
+                        <StackPanel Margin="10">
+                            <CheckBox x:Name="CheckBoxShowSystem" Content="Show System" IsChecked="{Binding Path=GlobalSettings.VisibilitySystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,3" />
+                            <CheckBox Content="Show CPU Usage" IsChecked="{Binding Path=GlobalSettings.VisibilitySystemCpuUsage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxShowSystem, Path=IsChecked}" Margin="0,3" />
+                            <CheckBox Content="Show CPU Temperature" IsChecked="{Binding Path=GlobalSettings.VisibilitySystemCpuTemp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxShowSystem, Path=IsChecked}" Margin="0,3" />
+                            <CheckBox Content="Show RAM Usage" IsChecked="{Binding Path=GlobalSettings.VisibilitySystemRamUsage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxShowSystem, Path=IsChecked}" Margin="0,3" />
+                            <CheckBox Content="Show GPU Load" IsChecked="{Binding Path=GlobalSettings.VisibilitySystemGpuLoad, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxShowSystem, Path=IsChecked}" Margin="0,3" />
+                            <CheckBox Content="Show GPU Temperature" IsChecked="{Binding Path=GlobalSettings.VisibilitySystemGpuTemp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxShowSystem, Path=IsChecked}" Margin="0,3" />
 
-                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Upload max value" />
-                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=NetworkUpMaxValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <Separator Margin="0,5" />
 
-                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Download max value" />
-                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=NetworkDownMaxValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="CPU usage refresh rate" />
+                            <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Path=GlobalSettings.PollingRateCpu, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxShowSystem, Path=IsChecked}" />
 
-                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="CPU" />
-                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=PollingRate_Cpu, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="RAM usage refresh rate" />
+                            <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Path=GlobalSettings.PollingRateRam, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxShowSystem, Path=IsChecked}" />
 
-                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="RAM" />
-                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=PollingRate_Ram, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Temperature refresh rate" />
+                            <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Path=GlobalSettings.PollingRateTemps, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxShowSystem, Path=IsChecked}" />
 
-                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Temperatures" />
-                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=PollingRate_Temp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Temperature unit" />
+                            <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Path=GlobalSettings.FormattingTempUnit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxShowSystem, Path=IsChecked}" />
 
-                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="CPU max temperature" />
-                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=CpuTempMaxValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="CPU temp max value" />
+                            <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Path=GlobalSettings.SystemTempCpuMaxValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxShowSystem, Path=IsChecked}" />
 
-                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="GPU max temperature" />
-                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=GpuTempMaxValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                    <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Drives" />
-                    <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Source={x:Static properties:Settings.Default}, Path=PollingRate_Drives, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="GPU temp max value" />
+                            <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Path=GlobalSettings.SystemTempGpuMaxValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxShowSystem, Path=IsChecked}" />
+                        </StackPanel>
+                    </GroupBox>
                 </StackPanel>
 
-                <StackPanel Grid.Column="1" Margin="15">
-                    <CheckBox Content="Show Date and Time" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=SectionVisibility_DateTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,3,0,5" />
-                    <CheckBox Content="Show Network" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=SectionVisibility_Network, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,3,0,5" />
-                    <CheckBox Content="Show System" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=SectionVisibility_System, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,3,0,5" />
-                    <CheckBox Content="Show Drives" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=SectionVisibility_Drives, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,3,0,5" />
-                    <CheckBox Content="Show in Taskbar" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=Ui_ShowInTaskbar, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,3,0,5" />
-                    <CheckBox Content="Run at Windows Startup" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=Ui_ExecuteAtStartup, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,3,0,5" />
+                <StackPanel Grid.Column="2">
+                    <GroupBox Header="Drives">
+                        <StackPanel Margin="10">
+                            <CheckBox Content="Show Drives" IsChecked="{Binding Path=GlobalSettings.VisibilityDrives, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,3" />
+                        </StackPanel>
+                    </GroupBox>
+
+                    <GroupBox Header="Date and Time">
+                        <StackPanel Margin="10">
+                            <CheckBox x:Name="CheckBoxShowDateTime" Content="Show Date and time" IsChecked="{Binding Path=GlobalSettings.VisibilityDateTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,3" />
+
+                            <Separator Margin="0,5" />
+
+                            <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Date and time refresh rate" />
+                            <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Path=GlobalSettings.PollingRateDateTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxShowDateTime, Path=IsChecked}" />
+
+                            <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Week number refresh rate" />
+                            <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Path=GlobalSettings.PollingRateWeek, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxShowDateTime, Path=IsChecked}" />
+
+                            <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Time format" />
+                            <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Path=GlobalSettings.FormattingTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxShowDateTime, Path=IsChecked}" />
+
+                            <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Date format" />
+                            <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Path=GlobalSettings.FormattingDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ElementName=CheckBoxShowDateTime, Path=IsChecked}" />
+                        </StackPanel>
+                    </GroupBox>
+                </StackPanel>
+                
+                <StackPanel Grid.Column="3">
+                    <GroupBox Header="User Interface">
+                        <StackPanel Margin="10">
+                            <CheckBox Content="Show in taskbar" IsChecked="{Binding Path=GlobalSettings.UiShowInTaskbar, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,3" />
+                            <CheckBox Content="Run at startup" IsChecked="{Binding Path=GlobalSettings.UiRunAtStartup, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,3" />
+                            <CheckBox Content="Show section headers" IsChecked="{Binding Path=GlobalSettings.VisibilitySectionHeaders, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,3" />
+
+                            <Separator Margin="0,5" />
+
+                            <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Section separator height" />
+                            <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Path=GlobalSettings.UiSectionSeparator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Posistion top" />
+                            <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Path=GlobalSettings.UiTop, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Position left" />
+                            <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Path=GlobalSettings.UiLeft, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBlock Style="{StaticResource StyleSettingsDescriptionTextBlock}" Text="Width" />
+                            <TextBox Style="{StaticResource StyleSettingsValueTextBox}" Text="{Binding Path=GlobalSettings.UiWidth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                    </GroupBox>
                 </StackPanel>
             </Grid>
         </ScrollViewer>

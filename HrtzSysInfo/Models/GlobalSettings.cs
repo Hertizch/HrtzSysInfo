@@ -45,6 +45,7 @@ namespace HrtzSysInfo.Models
         private bool _visibilitySystemRamUsage;
         private bool _visibilitySystemCpuTemp;
         private bool _visibilitySystemGpuTemp;
+        private bool _visibilitySystemGpuLoad;
 
         private long _networkSentMaxValue;
         private long _networkRecieveMaxValue;
@@ -243,6 +244,12 @@ namespace HrtzSysInfo.Models
         {
             get { return _visibilitySystemGpuTemp; }
             set { SetField(ref _visibilitySystemGpuTemp, value); }
+        }
+
+        public bool VisibilitySystemGpuLoad
+        {
+            get { return _visibilitySystemGpuLoad; }
+            set { SetField(ref _visibilitySystemGpuLoad, value); }
         }
 
         public long NetworkSentMaxValue

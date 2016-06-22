@@ -138,13 +138,12 @@
                         </controls:ValueContainer.Value>
                     </controls:ValueContainer>
 
-                    <ItemsControl ItemsSource="{Binding Path=Gpus}">
+                    <ItemsControl ItemsSource="{Binding Path=Gpus}" Visibility="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.VisibilitySystemGpuTemp, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <controls:ValueContainer Description="{Binding Path=Identifier, StringFormat={}GPU ({0}) Temp}"
                                                          ProgressValue="{Binding Path=Temperature}"
-                                                         ProgressMaxValue="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.SystemTempGpuMaxValue}"
-                                                         Visibility="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.VisibilitySystemGpuTemp, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                         ProgressMaxValue="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.SystemTempGpuMaxValue}">
                                     <controls:ValueContainer.Value>
                                         <MultiBinding Converter="{StaticResource TempToStringWithUnitConverter}">
                                             <Binding Path="Temperature" />
@@ -156,14 +155,13 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
 
-                    <ItemsControl ItemsSource="{Binding Path=Gpus}">
+                    <ItemsControl ItemsSource="{Binding Path=Gpus}" Visibility="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.VisibilitySystemGpuLoad, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <controls:ValueContainer Description="{Binding Path=Identifier, StringFormat={}GPU ({0}) Load}"
                                                          Value="{Binding Path=Load, StringFormat={}{0:0} %}"
                                                          ProgressValue="{Binding Path=Load}"
-                                                         ProgressMaxValue="100"
-                                                         Visibility="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.VisibilitySystemGpuTemp, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                         ProgressMaxValue="100">
                                 </controls:ValueContainer>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
