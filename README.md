@@ -2,9 +2,10 @@
 Displays the following information, in a customizable overlay, on your desktop:
 - CPU usage
 - RAM usage
-- Harddrive usage (multiple)
+- Harddrive usage
 - CPU temperature
-- GPU tempearture (multiple)
+- GPU temperature
+- GPU Load
 - Internal IP address
 - External IP address
 - Network usage (up/down)
