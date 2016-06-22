@@ -45,6 +45,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -73,6 +74,9 @@
     <Compile Include="Converters\DiskUsedSpaceToPercentageConverter.cs" />
     <Compile Include="Converters\HeightConverter.cs" />
     <Compile Include="Converters\TempToStringWithUnitConverter.cs" />
+    <Compile Include="Counters\CpuCounter.cs" />
+    <Compile Include="Counters\NetworkCounter.cs" />
+    <Compile Include="Counters\RamCounter.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\EventExtensions.cs" />
     <Compile Include="Extensions\MtObservableCollection.cs" />

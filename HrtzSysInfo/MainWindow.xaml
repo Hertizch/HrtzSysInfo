@@ -155,6 +155,19 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
+
+                    <ItemsControl ItemsSource="{Binding Path=Gpus}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <controls:ValueContainer Description="{Binding Path=Identifier, StringFormat={}GPU ({0}) Load}"
+                                                         Value="{Binding Path=Load, StringFormat={}{0:0} %}"
+                                                         ProgressValue="{Binding Path=Load}"
+                                                         ProgressMaxValue="100"
+                                                         Visibility="{Binding Source={StaticResource UserSettings}, Path=GlobalSettings.VisibilitySystemGpuTemp, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                </controls:ValueContainer>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </StackPanel>
             </Grid>
         </Grid>

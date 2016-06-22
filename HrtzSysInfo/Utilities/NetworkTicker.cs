@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
-using System.Threading;
 using System.Timers;
+using HrtzSysInfo.Counters;
 using HrtzSysInfo.Extensions;
 using HrtzSysInfo.Tools;
-using Timer = System.Timers.Timer;
 
 namespace HrtzSysInfo.Utilities
 {
@@ -23,8 +21,15 @@ namespace HrtzSysInfo.Utilities
 
         private void Initialize()
         {
-            foreach (var ni in NetworkInterface.GetAllNetworkInterfaces().Where(x => x.OperationalStatus.Equals(OperationalStatus.Up)).Where(x => x.NetworkInterfaceType.Equals(NetworkInterfaceType.Wireless80211) || x.NetworkInterfaceType.Equals(NetworkInterfaceType.Ethernet)))
-                _networkInterfaceName = ni.Description.Replace('(', '[').Replace(')', ']');
+            try
+            {
+                foreach (var ni in NetworkInterface.GetAllNetworkInterfaces().Where(x => x.OperationalStatus.Equals(OperationalStatus.Up)).Where(x => x.NetworkInterfaceType.Equals(NetworkInterfaceType.Wireless80211) || x.NetworkInterfaceType.Equals(NetworkInterfaceType.Ethernet)))
+                    _networkInterfaceName = ni.Description.Replace('(', '[').Replace(')', ']');
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
 
             if (string.IsNullOrEmpty(_networkInterfaceName))
             {
@@ -53,8 +58,6 @@ namespace HrtzSysInfo.Utilities
         }
 
         // Private fields
-        private PerformanceCounter _pcSent;
-        private PerformanceCounter _pcRecieved;
         private double _sent;
         private double _recieved;
         private string _externalIpAddress;
@@ -93,35 +96,11 @@ namespace HrtzSysInfo.Utilities
 
             // Up
             if (!(!UserSettings.GlobalSettings.VisibilityNetworkUpload && _networkInterfaceName != null))
-                Sent = GetNetworkSentValue();
+                Sent = NetworkCounter.GetNetworkSentValue(_networkInterfaceName);
 
             // Down
             if (UserSettings.GlobalSettings.VisibilityNetworkDownload && _networkInterfaceName != null)
-                Recieved = GetNetworkRecievedValue();
-        }
-
-        private double GetNetworkSentValue()
-        {
-            _pcSent = new PerformanceCounter("Network Interface", "Bytes Sent/sec", _networkInterfaceName);
-            double sentValue;
-            _pcSent?.NextValue();
-            Thread.Sleep(500);
-            var sentValueString = _pcSent?.NextValue().ToString(CultureInfo.InvariantCulture);
-            double.TryParse(sentValueString, out sentValue);
-            _pcSent?.Dispose();
-            return sentValue;
-        }
-
-        private double GetNetworkRecievedValue()
-        {
-            _pcRecieved = new PerformanceCounter("Network Interface", "Bytes Received/sec", _networkInterfaceName);
-            double recievedValue;
-            _pcRecieved?.NextValue();
-            Thread.Sleep(500);
-            var recievedValueString = _pcRecieved?.NextValue().ToString(CultureInfo.InvariantCulture);
-            double.TryParse(recievedValueString, out recievedValue);
-            _pcRecieved?.Dispose();
-            return recievedValue;
+                Recieved = NetworkCounter.GetNetworkRecievedValue(_networkInterfaceName);
         }
 
         private async void timerExternalIp_Elapsed(object sender, ElapsedEventArgs e)
@@ -140,14 +119,14 @@ namespace HrtzSysInfo.Utilities
             }
             catch (Exception ex)
             {
-                Logger.Write("NetworkTicker() - webClient.DownloadStringTaskAsync(\"http://icanhazip.com/\") - Exception raised", true, ex);
+                Logger.Write(
+                    "NetworkTicker() - webClient.DownloadStringTaskAsync(\"http://icanhazip.com/\") - Exception raised",
+                    true, ex);
             }
-            finally
-            {
-                ExternalIpAddress = !string.IsNullOrWhiteSpace(ip)
-                    ? ip.Trim()
-                    : "N/A";
-            }
+
+            ExternalIpAddress = !string.IsNullOrWhiteSpace(ip)
+                ? ip.Trim()
+                : "N/A";
         }
 
         private void timerInternalIp_Elapsed(object sender, ElapsedEventArgs e)
@@ -164,12 +143,10 @@ namespace HrtzSysInfo.Utilities
             {
                 Logger.Write("NetworkTicker() - NetworkExtensions.GetLocalIpAddress() - Exception raised", true, ex);
             }
-            finally
-            {
-                InternalIpAddress = !string.IsNullOrEmpty(ip)
-                    ? ip
-                    : "N/A";
-            }
+
+            InternalIpAddress = !string.IsNullOrEmpty(ip)
+                ? ip
+                : "N/A";
         }
     }
 }
