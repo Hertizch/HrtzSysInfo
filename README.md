@@ -15,6 +15,7 @@ Displays the following information, in a customizable overlay, on your desktop:
 - This application is currently considered as in an alpha stage. Bugs, crashes, wrongful values and instability may occur.
 - CPU/GPU temperatures and GPU usage may not be supported for your hardware. See: http://openhardwaremonitor.org/documentation/ for supported hardware.
 - Window edge-snapping not working as intended for multi-monitor setups.
+- Some anti-virus software may flag this as a virus.
  
 # Todo
 - Completing settings UI.
