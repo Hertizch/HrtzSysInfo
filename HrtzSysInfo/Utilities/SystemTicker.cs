@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Management;
 using System.Timers;
@@ -196,10 +198,10 @@ namespace HrtzSysInfo.Utilities
 
         private static int GetTotalNumberOfGpus()
         {
-            using (var objSearcher = new ManagementObjectSearcher("select * from Win32_VideoController"))
+            using (var objSearcher = new ManagementObjectSearcher("select * from Win32_VideoController WHERE DeviceID = 'VideoController1'"))
             {
-                var count = objSearcher.Get().OfType<ManagementObject>().Count(x => x["VideoProcessor"] != null);
-                return count;
+                var objects = objSearcher.Get().OfType<ManagementObject>().Select(x => x["VideoProcessor"] != null && x["AdapterRam"] != null && x["CurrentBitsPerPixel"] != null && x["CurrentHorizontalResolution"] != null);
+                return objects.Count();
             }
         }
 
